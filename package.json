@@ -1,0 +1,50 @@
+{
+  "name": "@atayahmet/react-slidify",
+  "version": "1.0.0-alpa.0",
+  "description": "React slider for objects.",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "dist",
+    "lib/**/*"
+  ],
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atayahmet/react-slidify.git"
+  },
+  "keywords": [
+    "object",
+    "slider"
+  ],
+  "author": "Ahmet ATAY",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/atayahmet/react-slidify/issues"
+  },
+  "homepage": "https://github.com/atayahmet/react-slidify#readme",
+  "devDependencies": {
+    "@types/react": "^16.9.2",
+    "@types/react-dom": "^16.9.0",
+    "prettier": "^1.18.2",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "tslint": "^5.19.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.6.2"
+  },
+  "dependencies": {}
+}
