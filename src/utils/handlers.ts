@@ -1,6 +1,6 @@
-import trigger from './trigger';
-import { get, getEndBorderValue, getPosCalcAsPercent, getPosition, getStartBorderValue } from './getters';
 import { hasCollisionInBegin, hasCollisionInEnd, isBorderStartArea, isMobile } from './assertions';
+import { get, getEndBorderValue, getPosCalcAsPercent, getPosition, getStartBorderValue } from './getters';
+import trigger from './trigger';
 
 export const onStartStopHandler = (
   params = {} as Record<string, any>,
@@ -8,11 +8,11 @@ export const onStartStopHandler = (
   eventName: string,
 ): any => () => {
   const { setIsMovable, translateX, translateY, sizes } = params;
-  const { width = 0, height = 0 } = sizes.cursor,
-    xHalf = width / 2,
-    yHalf = height / 2,
-    xPos = Math.floor(translateX + xHalf),
-    yPos = Math.floor(translateY + yHalf);
+  const { width = 0, height = 0 } = sizes.cursor;
+  const xHalf = width / 2;
+  const yHalf = height / 2;
+  const xPos = Math.floor(translateX + xHalf);
+  const yPos = Math.floor(translateY + yHalf);
 
   const xPercent = getPosCalcAsPercent(sizes.container.width, xHalf, xPos);
   const yPercent = getPosCalcAsPercent(sizes.container.height, yHalf, yPos);
@@ -87,14 +87,14 @@ export const onMoveHandler = (params: Record<string, any> = {}) => {
     if (hasY) {
       actionMoveHandler({
         ...params,
+        area: container.height,
+        axis: 'y',
+        clientDistance: clientY,
+        distance: translateY,
+        half: yHalf,
+        setter: setTranslateY,
         xPercent,
         yPercent,
-        axis: 'y',
-        half: yHalf,
-        distance: translateY,
-        setter: setTranslateY,
-        area: container.height,
-        clientDistance: clientY,
       });
     }
   };
