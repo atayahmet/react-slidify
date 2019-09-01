@@ -1,5 +1,9 @@
+.rs-container {
+  border: dashed 1px #ccc;
+}
+
 .rs-cursor-wrapper {
-  background-color: blue;
+  position: relative;
 }
 
 .rs-cursor {
