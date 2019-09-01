@@ -88,7 +88,7 @@ class RangeInput extends React.Component<IRange, any> {
 
   public render() {
     return (
-      <div className="rs-container" style={{border: 'solid 1px #ccc', height: this.prop("height"), width: this.prop('width'), position: 'relative'}}>
+      <div className="rs-container" style={{height: this.prop("height"), width: this.prop('width'), position: 'relative'}}>
         <div
           ref={this.containerEl}
           className="rs-cursor-wrapper"
