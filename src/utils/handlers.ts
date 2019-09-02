@@ -36,7 +36,7 @@ export const onClickHandler = (params: Record<string, any> = {}) => {
       setTranslateX(xStart + xHalf);
     }
     if (hasY) {
-      const yStart = getStartBorderValue(clientY, cursor.height);
+      const yStart = getPosition(clientY, cursor.height);
       setTranslateY(yStart + yHalf);
     }
   };
@@ -121,6 +121,7 @@ export function actionMoveHandler(params: Record<string, any>) {
   const endArea = getEndBorderValue(clientDistance, cursorSize, distance, area);
   const value = hasIn ? startArea + half : endArea - half;
   const eventDeps = [xPercent, yPercent, axis, options];
+
 
   setter(value + 0.001);
 

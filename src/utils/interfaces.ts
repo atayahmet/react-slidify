@@ -14,9 +14,9 @@ export interface ISizes {
   };
 }
 
-type EventHandlerArgs = (xPercent: number, yPercent: number, axis: string | null, options: IRange) => any;
+export type SliderEventHandlerArgs = (xPercent: number, yPercent: number, axis: string | null, options: ISliderOptions) => any;
 
-export interface IRange {
+export interface ISliderOptions {
   x: number;
   y: number;
   multiple?: boolean;
@@ -25,9 +25,9 @@ export interface IRange {
   unit: 'percent' | 'step';
   height?: number | string;
   cursorPoint?: 'center' | 'side';
-  onStart?: EventHandlerArgs;
-  onSlide?: EventHandlerArgs;
-  onStop?: EventHandlerArgs;
-  onFinish?: EventHandlerArgs;
-  onBegin?: EventHandlerArgs;
+  onStart?: SliderEventHandlerArgs;
+  onSlide?: SliderEventHandlerArgs;
+  onStop?: SliderEventHandlerArgs;
+  onFinish?: SliderEventHandlerArgs;
+  onBegin?: SliderEventHandlerArgs;
 }

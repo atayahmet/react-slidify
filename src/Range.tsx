@@ -4,17 +4,18 @@ import "./style.css";
 import { hasAxis } from './utils/assertions';
 import { get, getClientPos, getLeftButtonState, getPosCalcAsPx, getTranslates } from "./utils/getters";
 import { onClickHandler, onMoveHandler, onStartStopHandler } from './utils/handlers';
-import { IRange } from "./utils/interfaces";
+import { ISliderOptions } from "./utils/interfaces";
 
-class RangeInput extends React.Component<IRange, any> {
+class RangeInput extends React.Component<ISliderOptions, any> {
   protected cursorEl: React.RefObject<HTMLDivElement> = React.createRef();
-  protected containerEl: React.RefObject<HTMLDivElement> = React.createRef();
+  protected wrapperEl: React.RefObject<HTMLDivElement> = React.createRef();
+  private startHandlerTimeout: any;
 
-  constructor(props: IRange) {
+  constructor(props: ISliderOptions) {
     super(props);
   }
 
-  public componentDidUpdate(prevProps: IRange) {
+  public componentDidUpdate(prevProps: ISliderOptions) {
     let coords = {};
 
     if (this.hasX && prevProps.x !== this.props.x) {
@@ -35,10 +36,13 @@ class RangeInput extends React.Component<IRange, any> {
   }
 
   public componentDidMount() {
-    const el = this.containerEl.current as HTMLDivElement;
+    const el = this.wrapperEl.current as HTMLDivElement;
+    const domRect = el.getBoundingClientRect();
     const cursor = this.cursorEl.current as HTMLDivElement;
+
     const offsetWidth = get("offsetWidth", cursor, 0);
     const offsetHeight = get("offsetHeight", cursor, 0);
+
     this.setState({
       options: this.getProps(),
       sizes: {
@@ -52,8 +56,12 @@ class RangeInput extends React.Component<IRange, any> {
         }
       },
       ...this.getTranslatesWrapper(this.cursorEl.current) || {},
+      screen: {
+        left: domRect.left,
+        top: domRect.top
+      },
       translateX: this.state.hasX ? -(offsetWidth / 2) + this.prop('x') : 0,
-      translateY: this.state.hasY ? -(offsetHeight / 2) + this.prop('y') : 0
+      translateY: this.state.hasY ? -(offsetHeight / 2) + this.prop('y') : 0,
     })
   }
 
@@ -67,6 +75,10 @@ class RangeInput extends React.Component<IRange, any> {
       hasY,
       isFinish: false,
       isMovable: false,
+      screen: {
+        left: 0,
+        top: 0
+      },
       setFinish: (isFinish: boolean ) => this.setState({ isFinish }),
       setIsMovable: (isMovable: boolean) => this.setState({ isMovable }),
       setTranslateX: (translateX: number ) => this.setState({ translateX }),
@@ -90,16 +102,17 @@ class RangeInput extends React.Component<IRange, any> {
     return (
       <div className="rs-container" style={{height: this.prop("height"), width: this.prop('width'), position: 'relative'}}>
         <div
-          ref={this.containerEl}
+          ref={this.wrapperEl}
           className="rs-cursor-wrapper"
-          onTouchMove={this.moveHandler}
-          onMouseMove={this.moveHandler}
-          onMouseDown={this.clickHandler}
-          onTouchStart={this.clickHandler}
+          onTouchMoveCapture={this.moveHandler}
+          onMouseMoveCapture={this.moveHandler}
+          onMouseDownCapture={this.clickHandler}
+          onTouchStartCapture={this.clickHandler}
+
           style={{
-            height: `calc(100% - ${this.state.sizes.cursor.height}px)`,
+            height: `calc(100% - ${this.yHalf}px`,
             margin: `${this.yHalf}px ${this.xHalf}px`,
-            width: `calc(100% - ${this.state.sizes.cursor.width}px)`,
+            width: `calc(100% - ${this.xHalf}px`
           }}
         >
           <div
@@ -138,7 +151,7 @@ class RangeInput extends React.Component<IRange, any> {
     setTimeout(onClickHandler({...this.state, ...params, isMovable: true}), 5);
   }
 
-  private prop<K extends keyof IRange>(name: K) {
+  private prop<K extends keyof ISliderOptions>(name: K) {
     return this.getProps()[name];
   }
 
@@ -147,23 +160,48 @@ class RangeInput extends React.Component<IRange, any> {
   }
 
   private clickHandler = (e: any) => {
+    e.stopPropagation();
     if (this.prop('multiple') === true) {
       return;
     }
 
     this.moveStartHandler(e);
+
     const { clientX, clientY } = getClientPos(e);
-    onMoveHandler({...this.state, clientX, clientY, isMovable: true})();
+
+    onMoveHandler({
+      ...this.state,
+      clientX: (clientX - this.state.screen.left),
+      clientY: (clientY - this.state.screen.top),
+      isMovable: true
+    })();
   }
 
   private moveHandler = (e: any) => {
+    e.stopPropagation();
+
     const { clientX, clientY } = getClientPos(e);
     const buttonState = getLeftButtonState(e);
-    onMoveHandler({...this.state, buttonState, clientX, clientY})();
+
+    onMoveHandler({
+      ...this.state,
+      buttonState,
+      clientX: (clientX - this.state.screen.left),
+      clientY: (clientY - this.state.screen.top),
+
+    })();
   };
 
+  private moveStartHandler = (e: any) => {
+    e.stopPropagation();
+    clearTimeout(this.startHandlerTimeout);
+    this.startHandlerTimeout = setTimeout(() => {
+      onStartStopHandler({...this.state}, true, 'onStart')(e);
+    }, 50);
+  }
+
   private moveEndHandler = (e: any) => onStartStopHandler({...this.state}, false, 'onStop')(e);
-  private moveStartHandler = (e: any) => onStartStopHandler({...this.state}, true, 'onStart')(e);
+
   private getTranslatesWrapper = (el: HTMLDivElement | null) => el ? getTranslates(el) : {};
 }
 
