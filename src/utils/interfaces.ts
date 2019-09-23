@@ -14,11 +14,11 @@ export interface ISizes {
   };
 }
 
-export type SliderEventHandlerArgs = (xPercent: number, yPercent: number, axis: string | null, options: ISliderOptions) => any;
+export type SliderEventHandlerArgs = (xPercent: number, yPercent: number, axis: string | null, options: ISlidifyOptions) => any;
 
-export interface ISliderOptions {
-  x: number;
-  y: number;
+export interface ISlidifyOptions {
+  x?: number;
+  y?: number;
   multiple?: boolean;
   axis?: 'x' | 'y' | 'xy';
   width?: number | string;

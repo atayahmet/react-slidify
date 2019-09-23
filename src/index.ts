@@ -1,3 +1,3 @@
-import Range from './Range';
+import Slidify from './Slidify';
 
-export default Range;
+export default Slidify;

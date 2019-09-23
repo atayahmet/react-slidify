@@ -1,32 +1,32 @@
 import * as React from "react";
-import initialProps from './initialProps'
+import initialProps from './initialProps';
 import "./style.css";
 import { hasAxis } from './utils/assertions';
-import { get, getClientPos, getLeftButtonState, getPosCalcAsPx, getTranslates } from "./utils/getters";
+import { get, getClientPos, getInitialPos, getLeftButtonState, getPosCalcAsPx, getTranslates } from './utils/getters';
 import { onClickHandler, onMoveHandler, onStartStopHandler } from './utils/handlers';
-import { ISliderOptions } from "./utils/interfaces";
+import { ISlidifyOptions } from "./utils/interfaces";
 
-class RangeInput extends React.Component<ISliderOptions, any> {
+class Slidify extends React.Component<ISlidifyOptions, any> {
   protected cursorEl: React.RefObject<HTMLDivElement> = React.createRef();
   protected wrapperEl: React.RefObject<HTMLDivElement> = React.createRef();
   private startHandlerTimeout: any;
 
-  constructor(props: ISliderOptions) {
+  constructor(props: ISlidifyOptions) {
     super(props);
   }
 
-  public componentDidUpdate(prevProps: ISliderOptions) {
+  public componentDidUpdate(prevProps: ISlidifyOptions) {
     let coords = {};
 
     if (this.hasX && prevProps.x !== this.props.x) {
       if (this.props.unit === 'percent') {
-        const clientX = getPosCalcAsPx(this.state.sizes.container.width, this.xHalf, this.props.x);
+        const clientX = getPosCalcAsPx(this.state.sizes.container.width, this.xHalf, this.props.x || 0);
         coords = {...coords, clientX};
       }
     }
     if (this.hasY && prevProps.y !== this.props.y) {
       if (this.props.unit === 'percent') {
-        const clientY = getPosCalcAsPx(this.state.sizes.container.height, this.yHalf, this.props.y);
+        const clientY = getPosCalcAsPx(this.state.sizes.container.height, this.yHalf, this.props.y || 0);
         coords = {...coords, clientY};
       }
     }
@@ -43,12 +43,15 @@ class RangeInput extends React.Component<ISliderOptions, any> {
     const offsetWidth = get("offsetWidth", cursor, 0);
     const offsetHeight = get("offsetHeight", cursor, 0);
 
+    const clientWidth = get("clientWidth", el, 0);
+    const clientHeight = get("clientHeight", el, 0);
+
     this.setState({
       options: this.getProps(),
       sizes: {
         container: {
-          height: get("clientHeight", el, 0),
-          width: get("clientWidth", el, 0),
+          height: clientHeight,
+          width: clientWidth,
         },
         cursor: {
           height: offsetHeight,
@@ -60,9 +63,9 @@ class RangeInput extends React.Component<ISliderOptions, any> {
         left: domRect.left,
         top: domRect.top
       },
-      translateX: this.state.hasX ? -(offsetWidth / 2) + this.prop('x') : 0,
-      translateY: this.state.hasY ? -(offsetHeight / 2) + this.prop('y') : 0,
-    })
+      translateX: this.state.hasX ? getInitialPos(clientWidth, offsetWidth, this.prop('x') || 0) : 0,
+      translateY: this.state.hasY ? getInitialPos(clientHeight, offsetHeight, this.prop('y') || 0) : 0,
+    });
   }
 
   public componentWillMount() {
@@ -100,7 +103,7 @@ class RangeInput extends React.Component<ISliderOptions, any> {
 
   public render() {
     return (
-      <div className="rs-container" style={{height: this.prop("height"), width: this.prop('width'), position: 'relative'}}>
+      <div className="rs-container" style={{height: this.prop("height"), width: this.prop('width'), display: 'inline-block', position: 'relative'}}>
         <div
           ref={this.wrapperEl}
           className="rs-cursor-wrapper"
@@ -108,7 +111,6 @@ class RangeInput extends React.Component<ISliderOptions, any> {
           onMouseMoveCapture={this.moveHandler}
           onMouseDownCapture={this.clickHandler}
           onTouchStartCapture={this.clickHandler}
-
           style={{
             height: `calc(100% - ${this.yHalf}px`,
             margin: `${this.yHalf}px ${this.xHalf}px`,
@@ -151,7 +153,7 @@ class RangeInput extends React.Component<ISliderOptions, any> {
     setTimeout(onClickHandler({...this.state, ...params, isMovable: true}), 5);
   }
 
-  private prop<K extends keyof ISliderOptions>(name: K) {
+  private prop<K extends keyof ISlidifyOptions>(name: K) {
     return this.getProps()[name];
   }
 
@@ -161,6 +163,7 @@ class RangeInput extends React.Component<ISliderOptions, any> {
 
   private clickHandler = (e: any) => {
     e.stopPropagation();
+
     if (this.prop('multiple') === true) {
       return;
     }
@@ -188,7 +191,6 @@ class RangeInput extends React.Component<ISliderOptions, any> {
       buttonState,
       clientX: (clientX - this.state.screen.left),
       clientY: (clientY - this.state.screen.top),
-
     })();
   };
 
@@ -201,8 +203,7 @@ class RangeInput extends React.Component<ISliderOptions, any> {
   }
 
   private moveEndHandler = (e: any) => onStartStopHandler({...this.state}, false, 'onStop')(e);
-
   private getTranslatesWrapper = (el: HTMLDivElement | null) => el ? getTranslates(el) : {};
 }
 
-export default RangeInput;
+export default Slidify;

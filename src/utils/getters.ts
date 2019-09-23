@@ -1,3 +1,4 @@
+import { isBorderStartArea } from './assertions';
 import { ITranslate } from './interfaces';
 
 export function getTranslates(el: HTMLDivElement): ITranslate | void {
@@ -57,4 +58,12 @@ export function get(path: string, data: object, defaultData?: any): any {
 
 export function getClientPos(e: any): Record<string, number> {
   return Boolean(e.changedTouches) ? e.changedTouches[0] : e;
+}
+
+export function getInitialPos(area: number, cursor: number, initialDistance: number): number {
+  const half = (cursor / 2);
+  const hasIn = isBorderStartArea(area, initialDistance, (area / 2));
+  const startArea = getStartBorderValue(initialDistance - (cursor / 2), cursor);
+  const endArea = getEndBorderValue(initialDistance, cursor, initialDistance, area);
+  return hasIn ? startArea + half : endArea - half;
 }

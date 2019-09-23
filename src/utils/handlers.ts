@@ -122,7 +122,6 @@ export function actionMoveHandler(params: Record<string, any>) {
   const value = hasIn ? startArea + half : endArea - half;
   const eventDeps = [xPercent, yPercent, axis, options];
 
-
   setter(value + 0.001);
 
   if (hasCollisionInBegin(value, half, distance) && !isFinish) {

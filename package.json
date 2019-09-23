@@ -1,6 +1,6 @@
 {
   "name": "@atayahmet/react-slidify",
-  "version": "1.0.0-alpa.2",
+  "version": "1.0.0-alpa.3",
   "description": "React slider for objects.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -15,7 +15,7 @@
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
-    "prepare": "npm run build",
+    "prepare": "npm run build && cp src/style.css lib/style.css",
     "prepublishOnly": "npm test && npm run lint",
     "preversion": "npm run lint",
     "version": "npm run format && git add -A src",
