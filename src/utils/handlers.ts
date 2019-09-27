@@ -1,4 +1,5 @@
 import { hasCollisionInBegin, hasCollisionInEnd, isBorderStartArea, isMobile } from './assertions';
+import { END_POINT, START_POINT } from './contants';
 import { get, getEndBorderValue, getPosCalcAsPercent, getPosition, getStartBorderValue } from './getters';
 import trigger from './trigger';
 
@@ -120,16 +121,16 @@ export function actionMoveHandler(params: Record<string, any>) {
   const startArea = getStartBorderValue(clientDistance - half, cursorSize);
   const endArea = getEndBorderValue(clientDistance, cursorSize, distance, area);
   const value = hasIn ? startArea + half : endArea - half;
-  const eventDeps = [xPercent, yPercent, axis, options];
+  const eventDeps = [xPercent, yPercent, axis];
 
   setter(value + 0.001);
 
   if (hasCollisionInBegin(value, half, distance) && !isFinish) {
     setFinish(true);
-    trigger('onBegin', eventDeps);
+    trigger('onReach', [...eventDeps, START_POINT, options]);
   } else if (hasCollisionInEnd(value, area, half, distance) && !isFinish) {
     setFinish(true);
-    trigger('onFinish', eventDeps);
+    trigger('onReach', [...eventDeps, END_POINT, options]);
   } else if (value > 0 && distance > 0.001 && isFinish) {
     setFinish(false);
   }

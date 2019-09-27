@@ -4,7 +4,7 @@ import "./style.css";
 import { hasAxis } from './utils/assertions';
 import { get, getClientPos, getInitialPos, getLeftButtonState, getPosCalcAsPx, getTranslates } from './utils/getters';
 import { onClickHandler, onMoveHandler, onStartStopHandler } from './utils/handlers';
-import { ISlidifyOptions } from "./utils/interfaces";
+import { ICursor, ISlidifyOptions } from './utils/interfaces';
 
 class Slidify extends React.Component<ISlidifyOptions, any> {
   protected cursorEl: React.RefObject<HTMLDivElement> = React.createRef();
@@ -118,14 +118,15 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
           }}
         >
           <div
+            className={`rs-cursor ` + (this.prop('cursor').className || '')}
             ref={this.cursorEl}
-            className="rs-cursor"
             onTouchStart={this.moveStartHandler}
             onTouchEnd={this.moveEndHandler}
             onMouseUp={this.moveEndHandler}
             onMouseDown={this.moveStartHandler}
             style={{
-              transform: `translate3d(${this.state.translateX + 0}px, ${this.state.translateY + 0}px, 0)`
+              transform: `translate3d(${this.state.translateX + 0}px, ${this.state.translateY + 0}px, 0)`,
+              ...this.cursor
             }}
           />
         </div>
@@ -147,6 +148,23 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
 
   private get hasY(): boolean {
     return this.state.hasY;
+  }
+
+  private get cursor(): ICursor & React.CSSProperties {
+    const { width, height, style } = this.prop('cursor');
+    let sizes = {} as ICursor & React.CSSProperties;
+
+    if (Boolean(width)) {
+      sizes = {...sizes, width};
+    }
+    if (Boolean(height)) {
+      sizes = {...sizes, height};
+    }
+    if (Boolean(style)) {
+      sizes = {...style, ...sizes} as ICursor & React.CSSProperties;
+    }
+
+    return sizes;
   }
 
   private update(params: Record<string, any> = {}) {

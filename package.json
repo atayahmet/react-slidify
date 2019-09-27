@@ -1,6 +1,6 @@
 {
   "name": "@atayahmet/react-slidify",
-  "version": "1.0.0-alpa.3",
+  "version": "1.0.0-alpa.4",
   "description": "React slider for objects.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

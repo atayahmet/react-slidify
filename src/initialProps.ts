@@ -1,10 +1,14 @@
+import { ICursor } from './utils/interfaces';
+
 export default {
   axis: 'x',
-  cursorPoint: 'center',
+  cursor: {
+    height: 0,
+    width: 0
+  } as ICursor,
   height: 'auto',
   multiple: false,
-  onBegin: (e: any) => null,
-  onFinish: (e: any) => null,
+  onReach: (e: any) => null,
   onSlide: (e: any) => null,
   onStart: (e: any) => null,
   onStop: (e: any) => null,
