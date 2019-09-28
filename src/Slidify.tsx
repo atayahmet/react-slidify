@@ -2,6 +2,7 @@ import * as React from "react";
 import initialProps from './initialProps';
 import "./style.css";
 import { hasAxis } from './utils/assertions';
+import { ON_START, ON_STOP } from './utils/contants';
 import { get, getClientPos, getInitialPos, getLeftButtonState, getPosCalcAsPx, getTranslates } from './utils/getters';
 import { onClickHandler, onMoveHandler, onStartStopHandler } from './utils/handlers';
 import { ICursor, ISlidifyOptions } from './utils/interfaces';
@@ -216,11 +217,11 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
     e.stopPropagation();
     clearTimeout(this.startHandlerTimeout);
     this.startHandlerTimeout = setTimeout(() => {
-      onStartStopHandler({...this.state}, true, 'onStart')(e);
+      onStartStopHandler({...this.state}, true, ON_START)(e);
     }, 50);
   }
 
-  private moveEndHandler = (e: any) => onStartStopHandler({...this.state}, false, 'onStop')(e);
+  private moveEndHandler = (e: any) => onStartStopHandler({...this.state}, false, ON_STOP)(e);
   private getTranslatesWrapper = (el: HTMLDivElement | null) => el ? getTranslates(el) : {};
 }
 

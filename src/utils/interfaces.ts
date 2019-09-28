@@ -14,7 +14,7 @@ export interface ISizes {
 }
 
 export type Point = 'start-point' | 'end-point';
-export type SliderEventHandlerArgs = (xPercent: number, yPercent: number, axis: string | null) => any;
+export type EventHandlerArgs = (xPercent: number, yPercent: number, axis: string | null) => any;
 export type onReachHandlerArgs = (xPercent: number, yPercent: number, axis: string | null, point: Point) => any;
 
 export interface ICursor {
@@ -33,8 +33,8 @@ export interface ISlidifyOptions {
   unit?: 'percent' | 'step';
   height?: number | string;
   cursor?: ICursor;
-  onStart?: SliderEventHandlerArgs;
-  onSlide?: SliderEventHandlerArgs;
-  onStop?: SliderEventHandlerArgs;
+  onStart?: EventHandlerArgs;
+  onSlide?: EventHandlerArgs;
+  onStop?: EventHandlerArgs;
   onReach?: onReachHandlerArgs;
 }

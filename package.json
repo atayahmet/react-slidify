@@ -1,7 +1,7 @@
 {
   "name": "@atayahmet/react-slidify",
-  "version": "1.0.0-alpa.4",
-  "description": "React slider for objects.",
+  "version": "1.0.0-alpa.5",
+  "description": "React Slidify is a component that transmits position coordinates of element with callbacks.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
