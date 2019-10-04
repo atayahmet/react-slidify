@@ -1,5 +1,7 @@
-export function isBorderStartArea(area: number, current: number, half: number): boolean {
-  return (area - half) / 2 > current;
+const deepEqual = require('deep-equal');
+
+export function isBorderStartArea(area: number, distance: number, half: number): boolean {
+  return (area - half) / 2 > distance;
 }
 
 export function isBorderEndArea(width: number, current: number, half: number): boolean {
@@ -11,13 +13,17 @@ export function hasAxis(axis: string, list: string[]): boolean {
 }
 
 export function hasCollisionInBegin(currentPos: number, half: number, distance: number): boolean {
-  return currentPos === -half && Math.ceil(Math.abs(distance)) !== half;
+  return currentPos === 0;
 }
 
 export function hasCollisionInEnd(currentPos: number, area: number, half: number, distance: number): boolean {
-  return currentPos >= area - half * 3 && distance !== currentPos + 0.001;
+  return currentPos >= area - (half * 2) && distance !== currentPos;
 }
 
 export function isMobile(): boolean {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+export function isStyleEqualWith(a: Record<string, any> = {}, b: Record<string, any> = {}): boolean {
+  return deepEqual((a.style || {}), (b.style || {}), {strict: true});
 }

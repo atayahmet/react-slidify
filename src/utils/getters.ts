@@ -1,5 +1,6 @@
 import { isBorderStartArea } from './assertions';
 import { ITranslate } from './interfaces';
+import { PERCENT } from './contants';
 
 export function getTranslates(el: HTMLDivElement): ITranslate | void {
   if (Boolean(el) && el.style.transform !== null) {
@@ -12,19 +13,17 @@ export function getTranslates(el: HTMLDivElement): ITranslate | void {
 export function getPosition(distance: number, cursorWidth: number): number {
   const cursorHalf = cursorWidth / 2;
   const left = distance - cursorHalf;
-  return left < 0 ? distance - cursorWidth : left - cursorHalf;
+  return left < 0 ? distance - cursorHalf : left - cursorHalf;
 }
 
 export function getStartBorderValue(distance: number, cursorWidth: number): number {
-  const cursorHalf = cursorWidth / 2;
-  const left = distance - cursorHalf;
-  return left < -cursorHalf ? -cursorWidth : left - cursorHalf;
+  return distance < 0 ? 0 : distance;
 }
 
 export function getEndBorderValue(distance: number, cursorWidth: number, transX: number, areaWidth: number): number {
   const cursorHalf = cursorWidth / 2;
   const left = transX > areaWidth + cursorHalf ? areaWidth : distance;
-  return left > areaWidth - cursorHalf ? areaWidth - cursorWidth : left - cursorHalf;
+  return distance + cursorWidth > areaWidth ? areaWidth - cursorWidth : left;
 }
 
 export function getLeftButtonState(e: MouseEvent) {
@@ -32,14 +31,25 @@ export function getLeftButtonState(e: MouseEvent) {
   return event.buttons === undefined ? event.which : event.buttons;
 }
 
-export function getPosCalcAsPx(size: number, half: number, distancePercent: number): number {
-  const areaSize = size - half * 2;
-  const distance = (areaSize / 100) * distancePercent;
-  return distance > areaSize ? areaSize : distance;
+export function getPosCalc(size: number, point: number, distance: number, unit: string) {
+  switch (unit) {
+    case PERCENT: {
+      return getPosCalcAsPercent(size, point, distance);
+    }
+    default:
+      return getPosCalcAsPx(size, point, distance);
+  }
 }
 
-export function getPosCalcAsPercent(size: number, cursor: number, distance: number): number {
-  const newSize = size - cursor * 2;
+export function getPosCalcAsPx(size: number, point: number, distance: number): number {
+  const areaSize = size - point;
+  const percent = distance / size * 100
+  const targetDistance = size / 100 * percent;
+  return targetDistance > areaSize ? areaSize : targetDistance;
+}
+
+export function getPosCalcAsPercent(size: number, point: number, distance: number): number {
+  const newSize = size - point * 2;
   const percent = (distance / newSize) * 100;
   return percent > 100 || percent < 1 ? Math.round(percent) : percent;
 }
@@ -61,9 +71,8 @@ export function getClientPos(e: any): Record<string, number> {
 }
 
 export function getInitialPos(area: number, cursor: number, initialDistance: number): number {
-  const half = (cursor / 2);
   const hasIn = isBorderStartArea(area, initialDistance, (area / 2));
-  const startArea = getStartBorderValue(initialDistance - (cursor / 2), cursor);
+  const startArea = getStartBorderValue(initialDistance, cursor);
   const endArea = getEndBorderValue(initialDistance, cursor, initialDistance, area);
-  return hasIn ? startArea + half : endArea - half;
+  return hasIn ? startArea : endArea;
 }

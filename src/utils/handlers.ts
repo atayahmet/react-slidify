@@ -8,15 +8,13 @@ export const onStartStopHandler = (
   value: boolean,
   eventName: string,
 ): any => () => {
-  const { setIsMovable, translateX, translateY, sizes } = params;
-  const { width = 0, height = 0 } = sizes.cursor;
-  const xHalf = width / 2;
-  const yHalf = height / 2;
+  const { setIsMovable, translateX, translateY, container, points, index } = params;
+  const { xHalf, yHalf } = points[index];
   const xPos = Math.floor(translateX + xHalf);
   const yPos = Math.floor(translateY + yHalf);
 
-  const xPercent = getPosCalcAsPercent(sizes.container.width, xHalf, xPos);
-  const yPercent = getPosCalcAsPercent(sizes.container.height, yHalf, yPos);
+  const xPercent = getPosCalcAsPercent(container.width, xHalf, xPos);
+  const yPercent = getPosCalcAsPercent(container.height, yHalf, yPos);
 
   trigger(eventName, [xPercent, yPercent, null, { ...params.options }]);
   setIsMovable(value);
@@ -24,21 +22,21 @@ export const onStartStopHandler = (
 
 export const onClickHandler = (params: Record<string, any> = {}) => {
   return () => {
-    const { clientX = 0, clientY = 0, sizes, hasX, hasY } = params;
-    const { cursor } = sizes;
-    const xHalf = cursor.width / 2;
-    const yHalf = cursor.height / 2;
+    const { clientX = null, clientY = null, hasX, hasY, points, index } = params;
+    const { width, height } = points[index];
+    const xHalf = width / 2;
+    const yHalf = height / 2;
 
     const setTranslateX = get('setTranslateX', params);
     const setTranslateY = get('setTranslateY', params);
 
-    if (hasX) {
-      const xStart = getPosition(clientX, cursor.width);
-      setTranslateX(xStart + xHalf);
+    if (hasX && Boolean(clientX)) {
+      const xStart = getPosition(clientX, width);
+      setTranslateX(xStart + xHalf, index);
     }
-    if (hasY) {
-      const yStart = getPosition(clientY, cursor.height);
-      setTranslateY(yStart + yHalf);
+    if (hasY && Boolean(clientY)) {
+      const yStart = getPosition(clientY, height);
+      setTranslateY(yStart + yHalf, index);
     }
   };
 };
@@ -52,22 +50,20 @@ export const onMoveHandler = (params: Record<string, any> = {}) => {
     }
 
     const {
-      translateX = 0,
-      translateY = 0,
       setTranslateX,
       setTranslateY,
+      container,
+      index,
+      points,
       clientX,
       clientY,
-      sizes,
       hasX,
       hasY,
     } = params;
 
-    const { cursor, container } = sizes;
-    const xHalf = cursor.width / 2;
-    const yHalf = cursor.height / 2;
-    const xPercent = getPosCalcAsPercent(sizes.container.width, xHalf, translateX + xHalf);
-    const yPercent = getPosCalcAsPercent(sizes.container.height, yHalf, translateY + yHalf);
+    const { xHalf, yHalf, width, height, translateX, translateY} = points[index];
+    const xPercent = getPosCalcAsPercent(container.width, xHalf, translateX);
+    const yPercent = getPosCalcAsPercent(container.height, yHalf, translateY);
 
     // X position half left area.
     if (hasX) {
@@ -78,6 +74,7 @@ export const onMoveHandler = (params: Record<string, any> = {}) => {
         clientDistance: clientX,
         distance: translateX,
         half: xHalf,
+        pointSize: width,
         setter: setTranslateX,
         xPercent,
         yPercent,
@@ -93,6 +90,7 @@ export const onMoveHandler = (params: Record<string, any> = {}) => {
         clientDistance: clientY,
         distance: translateY,
         half: yHalf,
+        pointSize: height,
         setter: setTranslateY,
         xPercent,
         yPercent,
@@ -108,31 +106,33 @@ export function actionMoveHandler(params: Record<string, any>) {
     xPercent,
     yPercent,
     distance,
+    pointSize,
+    finishedAxis,
     isFinish,
     options,
     setter,
+    index,
     area,
     axis,
     half,
   } = params;
 
-  const cursorSize = half * 2;
   const hasIn = isBorderStartArea(area, distance, half);
-  const startArea = getStartBorderValue(clientDistance - half, cursorSize);
-  const endArea = getEndBorderValue(clientDistance, cursorSize, distance, area);
-  const value = hasIn ? startArea + half : endArea - half;
+  const startArea = getStartBorderValue(clientDistance, pointSize);
+  const endArea = getEndBorderValue(clientDistance, pointSize, distance, area);
+  const value = hasIn ? startArea : endArea;
   const eventDeps = [xPercent, yPercent, axis];
 
-  setter(value + 0.001);
+  setter(value, index);
 
-  if (hasCollisionInBegin(value, half, distance) && !isFinish) {
-    setFinish(true);
+  if (hasCollisionInBegin(value, half, distance) && hasIn && !isFinish && finishedAxis !== axis) {
+    setFinish(true, axis);
     trigger(ON_REACH, [...eventDeps, START_POINT, options]);
-  } else if (hasCollisionInEnd(value, area, half, distance) && !isFinish) {
-    setFinish(true);
+  } else if (hasCollisionInEnd(value, area, half, distance) && !hasIn && !isFinish && finishedAxis !== axis) {
+    setFinish(true, axis);
     trigger(ON_REACH, [...eventDeps, END_POINT, options]);
-  } else if (value > 0 && distance > 0.001 && isFinish) {
-    setFinish(false);
+  } else if (value > 1 && clientDistance && isFinish && finishedAxis === axis) {
+    setFinish(false, null);
   }
 
   trigger(ON_SLIDE, [...eventDeps, options]);
