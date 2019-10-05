@@ -10,7 +10,6 @@ export interface ISizes {
     width: number;
     height: number;
   };
-  cursor: ICursor;
 }
 
 export type Point = 'start-point' | 'end-point';
@@ -33,13 +32,6 @@ export interface IInternalPointProps extends IPoint {
   yHalf?: number;
 }
 
-export interface ICursor {
-  width?: number;
-  height?: number;
-  className?: string;
-  style?: CSSProperties;
-}
-
 export interface ISlidifyOptions {
   x?: number;
   y?: number;
@@ -49,7 +41,6 @@ export interface ISlidifyOptions {
   width?: number | string;
   unit?: 'percent' | 'px';
   height?: number | string;
-  cursor?: ICursor;
   onStart?: EventHandlerArgs;
   onSlide?: EventHandlerArgs;
   onStop?: EventHandlerArgs;

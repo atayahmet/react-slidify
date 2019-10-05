@@ -20,10 +20,6 @@ export function hasCollisionInEnd(currentPos: number, area: number, half: number
   return currentPos >= area - (half * 2) && distance !== currentPos;
 }
 
-export function isMobile(): boolean {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-
 export function isStyleEqualWith(a: Record<string, any> = {}, b: Record<string, any> = {}): boolean {
   return deepEqual((a.style || {}), (b.style || {}), {strict: true});
 }

@@ -6,6 +6,7 @@ import { ON_START, ON_STOP, PERCENT } from './utils/contants';
 import { get, getClientPos, getInitialPos, getLeftButtonState, getPosCalc } from './utils/getters';
 import { onClickHandler, onMoveHandler, onStartStopHandler } from './utils/handlers';
 import { ISlidifyOptions, IPoint, IInternalPointProps } from './utils/interfaces';
+import isNumber from 'is-number';
 import Point from './Point';
 
 class Slidify extends React.Component<ISlidifyOptions, any> {
@@ -15,13 +16,6 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
   private updateTimeout: any;
   private clickClientY: number = 0;
   private clickClientX: number = 0;
-
-  constructor(props: ISlidifyOptions) {
-    super(props);
-    this.state = {
-      showPoints: true
-    };
-  }
 
   public componentDidUpdate(prevProps: ISlidifyOptions) {
     const coords = [] as any[];
@@ -37,9 +31,8 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
       }
 
       let coord = {};
-      const clientX = getPosCalc(container.width, (point.width || 0), (point.x || 0), this.prop('unit'));
-      const clientY = getPosCalc(container.height, (point.height || 0), (point.y || 0), this.prop('unit'));
-
+      const clientX = getPosCalc(container.width, point.width, point.x, this.prop('unit'));
+      const clientY = getPosCalc(container.height, point.height, point.y, this.prop('unit'));
       const pointsLength = Object.keys(this.points).length;
       const prevPointsLength = Object.keys(prevProps.points).length;
 
@@ -177,7 +170,7 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
     const elements = [] as any[];
     let index = 0;
     while (Boolean(points[index])) {
-      if (!isNaN(Number(points[index].translateX)) && !isNaN(Number(points[index].translateY))) {
+      if (isNumber(points[index].translateX) && isNumber(points[index].translateY)) {
         elements.push(
           <Point
             key={index}
@@ -198,8 +191,8 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
     return points.map((point: IPoint) => {
       return {
         ...point,
-        translateX: this.hasX ? getInitialPos(this.clientWidth, point.width, point.x || 0) : 0,
-        translateY: this.hasY ? getInitialPos(this.clientHeight, point.height, point.y || 0) : 0
+        translateX: this.hasX ? getInitialPos(this.clientWidth, point.width, point.x) : 0,
+        translateY: this.hasY ? getInitialPos(this.clientHeight, point.height, point.y) : 0
       };
     });
   }
@@ -210,7 +203,7 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
     const axis = args.shift();
     const { points } = this.state;
     points[index][axis] = value;
-    this.setState({ render: true, showPoints: true, points: [ ...points ]});
+    this.setState({ render: true, points: [ ...points ]});
   };
 
   private setRequiredProps(points: IPoint[] = []): IInternalPointProps[] {

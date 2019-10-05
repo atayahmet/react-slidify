@@ -1,7 +1,8 @@
-import { hasCollisionInBegin, hasCollisionInEnd, isBorderStartArea, isMobile } from './assertions';
+import { hasCollisionInBegin, hasCollisionInEnd, isBorderStartArea } from './assertions';
 import { END_POINT, ON_REACH, ON_SLIDE, START_POINT } from './contants';
-import { get, getEndBorderValue, getPosCalcAsPercent, getPosition, getStartBorderValue } from './getters';
+import { get, getEndBorderValue, getPosCalcAsPercent, getStartBorderValue } from './getters';
 import trigger from './trigger';
+import { isMobile } from 'is-mobile';
 
 export const onStartStopHandler = (
   params = {} as Record<string, any>,
@@ -22,21 +23,15 @@ export const onStartStopHandler = (
 
 export const onClickHandler = (params: Record<string, any> = {}) => {
   return () => {
-    const { clientX = null, clientY = null, hasX, hasY, points, index } = params;
-    const { width, height } = points[index];
-    const xHalf = width / 2;
-    const yHalf = height / 2;
-
+    const { clientX = null, clientY = null, hasX, hasY, index } = params;
     const setTranslateX = get('setTranslateX', params);
     const setTranslateY = get('setTranslateY', params);
 
     if (hasX && Boolean(clientX)) {
-      const xStart = getPosition(clientX, width);
-      setTranslateX(xStart + xHalf, index);
+      setTranslateX(clientX, index);
     }
     if (hasY && Boolean(clientY)) {
-      const yStart = getPosition(clientY, height);
-      setTranslateY(yStart + yHalf, index);
+      setTranslateY(clientY, index);
     }
   };
 };

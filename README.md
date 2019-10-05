@@ -1,3 +1,5 @@
+[![npm version](https://badge.fury.io/js/%40atayahmet%2Freact-slidify.svg)](https://badge.fury.io/js/%40atayahmet%2Freact-slidify)
+
 # React Slidify
 
 React Slidify is a component that transmits position coordinates with callbacks at each step of an object that you can advance by dragging within a field. The component can be use as volume control, music player timeline etc.

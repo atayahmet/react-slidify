@@ -10,12 +10,6 @@ export function getTranslates(el: HTMLDivElement): ITranslate | void {
   }
 }
 
-export function getPosition(distance: number, cursorWidth: number): number {
-  const cursorHalf = cursorWidth / 2;
-  const left = distance - cursorHalf;
-  return left < 0 ? distance - cursorHalf : left - cursorHalf;
-}
-
 export function getStartBorderValue(distance: number, cursorWidth: number): number {
   return distance < 0 ? 0 : distance;
 }
@@ -31,7 +25,7 @@ export function getLeftButtonState(e: MouseEvent) {
   return event.buttons === undefined ? event.which : event.buttons;
 }
 
-export function getPosCalc(size: number, point: number, distance: number, unit: string) {
+export function getPosCalc(size: number, point: number = 0, distance: number = 0, unit: string) {
   switch (unit) {
     case PERCENT: {
       return getPosCalcAsPercent(size, point, distance);
@@ -70,7 +64,7 @@ export function getClientPos(e: any): Record<string, number> {
   return Boolean(e.changedTouches) ? e.changedTouches[0] : e;
 }
 
-export function getInitialPos(area: number, cursor: number, initialDistance: number): number {
+export function getInitialPos(area: number, cursor: number, initialDistance: number = 0): number {
   const hasIn = isBorderStartArea(area, initialDistance, (area / 2));
   const startArea = getStartBorderValue(initialDistance, cursor);
   const endArea = getEndBorderValue(initialDistance, cursor, initialDistance, area);
