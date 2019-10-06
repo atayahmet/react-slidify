@@ -8,3 +8,9 @@ export const ON_STOP = 'onStop';
 
 export const PERCENT = 'percent';
 export const PIXEL = 'px';
+
+export const AREA_FIRST = 'first';
+export const AREA_SECOND = 'second';
+
+export const AXIS_X = 'x';
+export const AXIS_Y = 'y';

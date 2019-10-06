@@ -1,4 +1,5 @@
 import * as React from "react";
+import elementResizeEvent from 'element-resize-event';
 import initialProps from './initialProps';
 import "./style.css";
 import { hasAxis, isStyleEqualWith } from './utils/assertions';
@@ -14,6 +15,7 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
   private currentIndex: number|null = null;
   private startHandlerTimeout: any;
   private updateTimeout: any;
+  private resizeTimeout: any;
   private clickClientY: number = 0;
   private clickClientX: number = 0;
 
@@ -67,24 +69,17 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
   }
 
   public componentDidMount() {
-    const el = this.wrapperEl.current as HTMLDivElement;
-    const domRect = el.getBoundingClientRect();
-    const clientWidth = get("clientWidth", el, 0);
-    const clientHeight = get("clientHeight", el, 0);
     const points = this.setTranslates(this.state.points);
 
     this.setState({
       options: this.getProps(),
-      container: {
-        height: clientHeight,
-        width: clientWidth,
-      },
-      screen: {
-        left: domRect.left,
-        top: domRect.top
-      },
+      ...this.getSizes(),
       points,
       render: true
+    }, () => {
+      if (this.wrapperEl.current) {
+        elementResizeEvent(this.wrapperEl.current, this.resizeHandler);
+      }
     });
   }
 
@@ -105,8 +100,7 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
       },
       setFinish: (isFinish: boolean, axis: string) => this.setState({ isFinish, finishedAxis: axis }),
       setIsMovable: (isMovable: boolean) => this.setState({ isMovable }),
-      setTranslateX: (...args: any[]) => this.setTranslate.call(this, ...args, 'translateX'),
-      setTranslateY: (...args: any[]) => this.setTranslate.call(this, ...args, 'translateY'),
+      setTranslates: (...args: any[]) => this.setTrans.call(this, ...args),
       container: {
         height: 0,
         width: 0,
@@ -197,12 +191,11 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
     });
   }
 
-  private setTranslate = (...args: any[]) => {
+  private setTrans = (...args: any[]) => {
     const value = args.shift();
     const index = args.shift();
-    const axis = args.shift();
     const { points } = this.state;
-    points[index][axis] = value;
+    points[index] = {...points[index], ...value};
     this.setState({ render: true, points: [ ...points ]});
   };
 
@@ -244,6 +237,34 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
   private getProps() {
     return { ...initialProps, ...this.props };
   }
+
+  public getSizes() {
+    const el = this.wrapperEl.current as HTMLDivElement;
+    const domRect = el.getBoundingClientRect();
+    const clientWidth = get("clientWidth", el, 0);
+    const clientHeight = get("clientHeight", el, 0);
+
+    return {
+      container: {
+        height: clientHeight,
+        width: clientWidth,
+      },
+      screen: {
+        left: domRect.left,
+        top: domRect.top
+      }
+    }
+  }
+
+  private resizeHandler = () => {
+    clearTimeout(this.resizeTimeout);
+    this.resizeTimeout = setTimeout(() => {
+      this.setState({
+        ...this.state,
+        ...this.getSizes()
+      });
+    }, 100);
+  };
 
   private clickHandler = (e: any) => {
     if (this.prop('multiple') === true) {

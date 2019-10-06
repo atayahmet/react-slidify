@@ -12,9 +12,10 @@ export interface ISizes {
   };
 }
 
-export type Point = 'start-point' | 'end-point';
+export type ReachPoint = 'start-point' | 'end-point';
+export type onSlideHandlerArgs = (xPercent: number, yPercent: number) => any;
 export type EventHandlerArgs = (xPercent: number, yPercent: number, axis: string | null) => any;
-export type onReachHandlerArgs = (xPercent: number, yPercent: number, axis: string | null, point: Point) => any;
+export type onReachHandlerArgs = (xPercent: number, yPercent: number, axis: string | null, point: ReachPoint) => any;
 
 export interface IPoint {
   x: number;
@@ -42,7 +43,21 @@ export interface ISlidifyOptions {
   unit?: 'percent' | 'px';
   height?: number | string;
   onStart?: EventHandlerArgs;
-  onSlide?: EventHandlerArgs;
+  onSlide?: onSlideHandlerArgs;
   onStop?: EventHandlerArgs;
   onReach?: onReachHandlerArgs;
+}
+
+export interface IBorderEvent { 
+  value: number;
+  isFinish: boolean;
+  half: number;
+  setFinish: CallableFunction;
+  finishedAxis: string;
+  axis: string;
+  distance: number;
+  options: any;
+  eventDeps: any;
+  area: number;
+  clientDistance: number;
 }

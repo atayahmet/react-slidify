@@ -1,8 +1,9 @@
-import { hasCollisionInBegin, hasCollisionInEnd, isBorderStartArea } from './assertions';
-import { END_POINT, ON_REACH, ON_SLIDE, START_POINT } from './contants';
+import { isBorderStartArea } from './assertions';
 import { get, getEndBorderValue, getPosCalcAsPercent, getStartBorderValue } from './getters';
 import trigger from './trigger';
 import { isMobile } from 'is-mobile';
+import { collision } from './collisions';
+import { ON_SLIDE, AXIS_X, AXIS_Y } from './contants';
 
 export const onStartStopHandler = (
   params = {} as Record<string, any>,
@@ -18,21 +19,24 @@ export const onStartStopHandler = (
   const yPercent = getPosCalcAsPercent(container.height, yHalf, yPos);
 
   trigger(eventName, [xPercent, yPercent, null, { ...params.options }]);
+
   setIsMovable(value);
 };
 
 export const onClickHandler = (params: Record<string, any> = {}) => {
   return () => {
+    let axis = {};
+    const setTranslates = get('setTranslates', params);
     const { clientX = null, clientY = null, hasX, hasY, index } = params;
-    const setTranslateX = get('setTranslateX', params);
-    const setTranslateY = get('setTranslateY', params);
 
     if (hasX && Boolean(clientX)) {
-      setTranslateX(clientX, index);
+      axis = {...axis, translateX: clientX};
     }
     if (hasY && Boolean(clientY)) {
-      setTranslateY(clientY, index);
+      axis = {...axis, translateY: clientY};
     }
+
+    window.requestAnimationFrame(() => setTranslates({ ...axis }, index));
   };
 };
 
@@ -45,9 +49,9 @@ export const onMoveHandler = (params: Record<string, any> = {}) => {
     }
 
     const {
-      setTranslateX,
-      setTranslateY,
+      setTranslates,
       container,
+      options,
       index,
       points,
       clientX,
@@ -59,56 +63,66 @@ export const onMoveHandler = (params: Record<string, any> = {}) => {
     const { xHalf, yHalf, width, height, translateX, translateY} = points[index];
     const xPercent = getPosCalcAsPercent(container.width, xHalf, translateX);
     const yPercent = getPosCalcAsPercent(container.height, yHalf, translateY);
+    let translates = {} as Record<string, any>;
 
     // X position half left area.
     if (hasX) {
-      actionMoveHandler({
+      const axisParams = {
         ...params,
         area: container.width,
-        axis: 'x',
         clientDistance: clientX,
         distance: translateX,
         half: xHalf,
         pointSize: width,
-        setter: setTranslateX,
-        xPercent,
-        yPercent,
-      });
+      };
+      translates = {
+        ...translates, 
+        translateX: actionMove({...axisParams})
+      };
+      collision.trigger.border({
+        ...axisParams,
+        axis: AXIS_X,
+        value: translates.translateX,
+        eventDeps: [xPercent, yPercent, AXIS_X]
+      } as any);
     }
 
     // Y position half top area.
     if (hasY) {
-      actionMoveHandler({
+      const axisParams = {
         ...params,
         area: container.height,
-        axis: 'y',
         clientDistance: clientY,
         distance: translateY,
         half: yHalf,
         pointSize: height,
-        setter: setTranslateY,
-        xPercent,
-        yPercent,
-      });
+      };
+
+      translates = {
+        ...translates, 
+        translateY: actionMove({...axisParams})
+      };
+
+      collision.trigger.border({
+        ...axisParams, 
+        axis: AXIS_Y,
+        value: translates.translateY,
+        eventDeps: [xPercent, yPercent, AXIS_Y]
+      } as any);
     }
+
+    window.requestAnimationFrame(() => setTranslates(translates, index));
+
+    trigger(ON_SLIDE, [xPercent, yPercent, options]);
   };
 };
 
-export function actionMoveHandler(params: Record<string, any>) {
+export function actionMove(params: Record<string, any>) {
   const {
     clientDistance,
-    setFinish,
-    xPercent,
-    yPercent,
     distance,
     pointSize,
-    finishedAxis,
-    isFinish,
-    options,
-    setter,
-    index,
     area,
-    axis,
     half,
   } = params;
 
@@ -116,19 +130,6 @@ export function actionMoveHandler(params: Record<string, any>) {
   const startArea = getStartBorderValue(clientDistance, pointSize);
   const endArea = getEndBorderValue(clientDistance, pointSize, distance, area);
   const value = hasIn ? startArea : endArea;
-  const eventDeps = [xPercent, yPercent, axis];
 
-  setter(value, index);
-
-  if (hasCollisionInBegin(value, half, distance) && hasIn && !isFinish && finishedAxis !== axis) {
-    setFinish(true, axis);
-    trigger(ON_REACH, [...eventDeps, START_POINT, options]);
-  } else if (hasCollisionInEnd(value, area, half, distance) && !hasIn && !isFinish && finishedAxis !== axis) {
-    setFinish(true, axis);
-    trigger(ON_REACH, [...eventDeps, END_POINT, options]);
-  } else if (value > 1 && clientDistance && isFinish && finishedAxis === axis) {
-    setFinish(false, null);
-  }
-
-  trigger(ON_SLIDE, [...eventDeps, options]);
+  return value;
 }

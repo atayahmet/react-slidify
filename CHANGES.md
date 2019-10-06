@@ -25,3 +25,4 @@
 ## Changes for v1.0.0-alpha.6:
 - Added version badge.
 - Added multiple point support.
+- Added element resize detection.
