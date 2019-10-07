@@ -1,9 +1,9 @@
+import { isMobile } from 'is-mobile';
 import { isBorderStartArea } from './assertions';
+import { collision } from './collisions';
+import { AXIS_X, AXIS_Y, ON_SLIDE } from './contants';
 import { get, getEndBorderValue, getPosCalcAsPercent, getStartBorderValue } from './getters';
 import trigger from './trigger';
-import { isMobile } from 'is-mobile';
-import { collision } from './collisions';
-import { ON_SLIDE, AXIS_X, AXIS_Y } from './contants';
 
 export const onStartStopHandler = (
   params = {} as Record<string, any>,
@@ -61,8 +61,6 @@ export const onMoveHandler = (params: Record<string, any> = {}) => {
       hasY,
     } = params;
 
-    console.log('points', points, index);
-
     const { xHalf, yHalf, width, height, translateX, translateY} = points[index];
     const xPercent = getPosCalcAsPercent(container.width, xHalf, translateX);
     const yPercent = getPosCalcAsPercent(container.height, yHalf, translateY);
@@ -84,8 +82,8 @@ export const onMoveHandler = (params: Record<string, any> = {}) => {
       collision.trigger.border({
         ...axisParams,
         axis: AXIS_X,
-        value: translates.translateX,
-        eventDeps: [xPercent, yPercent, AXIS_X, {...points[index]}]
+        eventDeps: [xPercent, yPercent, AXIS_X, {...points[index]}],
+        value: translates.translateX
       } as any);
     }
 
@@ -105,8 +103,8 @@ export const onMoveHandler = (params: Record<string, any> = {}) => {
       collision.trigger.border({
         ...axisParams, 
         axis: AXIS_Y,
-        value: translates.translateY,
-        eventDeps: [xPercent, yPercent, AXIS_Y, {...points[index]}]
+        eventDeps: [xPercent, yPercent, AXIS_Y, {...points[index]}],
+        value: translates.translateY
       } as any);
     }
 

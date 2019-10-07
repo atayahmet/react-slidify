@@ -1,14 +1,14 @@
-import * as React from "react";
 import elementResizeEvent from 'element-resize-event';
+import isNumber from 'is-number';
+import * as React from "react";
 import initialProps from './initialProps';
+import Point from './Point';
 import "./style.css";
 import { hasAxis, isStyleEqualWith } from './utils/assertions';
 import { ON_START, ON_STOP, PERCENT } from './utils/contants';
-import { get, getClientPos, getInitialPos, getLeftButtonState, getPosCalc, getClientRects } from './utils/getters';
+import { get, getClientPos, getClientRects, getInitialPos, getLeftButtonState, getPosCalc } from './utils/getters';
 import { onClickHandler, onMoveHandler, onStartStopHandler } from './utils/handlers';
-import { ISlidifyOptions, IPoint, IInternalPointProps } from './utils/interfaces';
-import isNumber from 'is-number';
-import Point from './Point';
+import { IInternalPointProps, IPoint, ISlidifyOptions } from './utils/interfaces';
 
 class Slidify extends React.Component<ISlidifyOptions, any> {
   protected wrapperEl: React.RefObject<HTMLDivElement> = React.createRef();
@@ -90,22 +90,22 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
     const points = this.setRequiredProps(this.points);
 
     this.setState({
-      hasX,
-      hasY,
-      isFinish: false,
-      isMovable: false,
-      screen: {
-        left: 0,
-        top: 0
-      },
-      setFinish: (isFinish: boolean, axis: string) => this.setState({ isFinish, finishedAxis: axis }),
-      setIsMovable: (isMovable: boolean) => this.setState({ isMovable }),
-      setTranslates: (...args: any[]) => this.setTrans.call(this, ...args),
       container: {
         height: 0,
         width: 0,
       },
+      hasX,
+      hasY,
+      isFinish: false,
+      isMovable: false,
       points,
+      screen: {
+        left: 0,
+        top: 0
+      },
+      setFinish: (isFinish: boolean, finishedAxis: string) => this.setState({ isFinish, finishedAxis }),
+      setIsMovable: (isMovable: boolean) => this.setState({ isMovable }),
+      setTranslates: (...args: any[]) => this.setTrans.call(this, ...args)
     });
   }
 
@@ -210,7 +210,7 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
     });
   }
 
-  private update(coords: Record<string, any>[] = [], points: IInternalPointProps[]) {
+  private update(coords: Array<Record<string, any>> = [], points: IInternalPointProps[]) {
     clearTimeout(this.updateTimeout);
     this.updateTimeout = setTimeout(() => {
       this.setState({render: false, points: [...points]});
@@ -219,10 +219,10 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
         setTimeout(onClickHandler({
             ...this.state,
             ...coords.shift(),
-            render: true,
-            points: [...points],
+            index,
             isMovable: true,
-            index
+            points: [...points],
+            render: true
           }),
         2);
         index++;
@@ -238,7 +238,7 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
     return { ...initialProps, ...this.props };
   }
 
-  public getSizes() {
+  private getSizes() {
     const el = this.wrapperEl.current as HTMLDivElement;
     const domRect = el.getBoundingClientRect();
     const clientWidth = get("clientWidth", el, 0);
@@ -298,9 +298,9 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
       onMoveHandler({
         ...this.state,
         buttonState,
-        index: this.currentIndex,
         clientX: (clientX - this.state.screen.left) - this.clickClientX,
         clientY: (clientY - this.state.screen.top) - this.clickClientY,
+        index: this.currentIndex,
       })();
     }, 2);
   };

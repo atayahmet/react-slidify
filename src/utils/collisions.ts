@@ -1,6 +1,6 @@
-import { AREA_FIRST, ON_REACH, START_POINT, END_POINT, AREA_SECOND } from './contants';
-import trigger from './trigger';
+import { AREA_FIRST, AREA_SECOND, END_POINT, ON_REACH, START_POINT } from './contants';
 import { IBorderEvent } from './interfaces';
+import trigger from './trigger';
 
 function hasBorderCollision(...args: any[]) {
   return args.shift() === AREA_FIRST ? firstArea.call(null, ...args) : secondArea.call(null, ...args);
@@ -31,8 +31,8 @@ export function secondArea(...args: any[]): boolean {
 }
 
 export const collision = {
+  border: hasBorderCollision,
   trigger:  {
     border: borderEventTrigger
-  },
-  border: hasBorderCollision
+  }
 };
