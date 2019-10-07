@@ -1,6 +1,6 @@
 import { isBorderStartArea } from './assertions';
-import { ITranslate } from './interfaces';
 import { PERCENT } from './contants';
+import { ITranslate } from './interfaces';
 
 export function getTranslates(el: HTMLDivElement): ITranslate | void {
   if (Boolean(el) && el.style.transform !== null) {
@@ -62,6 +62,11 @@ export function get(path: string, data: object, defaultData?: any): any {
 
 export function getClientPos(e: any): Record<string, number> {
   return Boolean(e.changedTouches) ? e.changedTouches[0] : e;
+}
+
+export function getClientRects(e: Record<string, any>) {
+  const rects = ({...e}).target.getClientRects();
+  return rects[0] || {};
 }
 
 export function getInitialPos(area: number, cursor: number, initialDistance: number = 0): number {

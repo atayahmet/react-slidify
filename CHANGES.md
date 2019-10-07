@@ -22,7 +22,7 @@
 - Array destruct changed to as take last item.
 - All event name that added hard coded has been changed to as constant.
 
-## Changes for v1.0.0-alpha.6:
+## Changes for v1.0.0-alpha.7:
 - Added version badge.
 - Added multiple point support.
 - Added element resize detection.

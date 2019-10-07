@@ -13,9 +13,11 @@ export interface ISizes {
 }
 
 export type ReachPoint = 'start-point' | 'end-point';
-export type onSlideHandlerArgs = (xPercent: number, yPercent: number) => any;
-export type EventHandlerArgs = (xPercent: number, yPercent: number, axis: string | null) => any;
-export type onReachHandlerArgs = (xPercent: number, yPercent: number, axis: string | null, point: ReachPoint) => any;
+export type GenericHandlerArgs = (xPercent: number, yPercent: number, point: IPoint) => any;
+export type onSlideHandlerArgs = GenericHandlerArgs;
+export type onStartHandlerArgs = GenericHandlerArgs;
+export type onStopHandlerArgs = GenericHandlerArgs;
+export type onReachHandlerArgs = (xPercent: number, yPercent: number, axis: string, point: IPoint, at: ReachPoint) => any;
 
 export interface IPoint {
   x: number;
@@ -23,6 +25,7 @@ export interface IPoint {
   width: number;
   height: number;
   style?: CSSProperties;
+  className?: string;
 }
 
 export interface IInternalPointProps extends IPoint {
@@ -42,9 +45,9 @@ export interface ISlidifyOptions {
   width?: number | string;
   unit?: 'percent' | 'px';
   height?: number | string;
-  onStart?: EventHandlerArgs;
+  onStart?: onStartHandlerArgs;
+  onStop?: onStopHandlerArgs;
   onSlide?: onSlideHandlerArgs;
-  onStop?: EventHandlerArgs;
   onReach?: onReachHandlerArgs;
 }
 

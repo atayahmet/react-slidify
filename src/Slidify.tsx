@@ -4,7 +4,7 @@ import initialProps from './initialProps';
 import "./style.css";
 import { hasAxis, isStyleEqualWith } from './utils/assertions';
 import { ON_START, ON_STOP, PERCENT } from './utils/contants';
-import { get, getClientPos, getInitialPos, getLeftButtonState, getPosCalc } from './utils/getters';
+import { get, getClientPos, getInitialPos, getLeftButtonState, getPosCalc, getClientRects } from './utils/getters';
 import { onClickHandler, onMoveHandler, onStartStopHandler } from './utils/handlers';
 import { ISlidifyOptions, IPoint, IInternalPointProps } from './utils/interfaces';
 import isNumber from 'is-number';
@@ -261,9 +261,10 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
     this.resizeTimeout = setTimeout(() => {
       this.setState({
         ...this.state,
-        ...this.getSizes()
+        ...this.getSizes(),
+        points: this.setTranslates(this.state.points)
       });
-    }, 100);
+    }, 10);
   };
 
   private clickHandler = (e: any) => {
@@ -271,14 +272,20 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
       return;
     }
 
-    const { clientX, clientY } = getClientPos(e);
+    setTimeout(() => {
+      const { clientX, clientY } = getClientPos(e);
+      const { xHalf = this.clickClientX, yHalf = this.clickClientY } = this.state.isMovable 
+        ? {} 
+        : this.state.points[0];
 
-    onMoveHandler({
-      ...this.state,
-      clientX: (clientX - this.state.screen.left),
-      clientY: (clientY - this.state.screen.top),
-      isMovable: true
-    })();
+      onMoveHandler({
+        ...this.state,
+        clientX: (clientX - this.state.screen.left) - xHalf,
+        clientY: (clientY - this.state.screen.top) - yHalf,
+        index: 0,
+        isMovable: true
+      })();
+    }, 2);
   }
 
   private moveHandler = (e: any) => {
@@ -300,13 +307,12 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
 
   private moveStartHandler = (e: any, index: number) => {
     e.stopPropagation();
-    this.clickClientY = e.clientY - ({...e}).target.getClientRects()[0].top;
-    this.clickClientX = e.clientX - ({...e}).target.getClientRects()[0].left;
+    const { top = 0, left = 0 } = getClientRects(e);
+    this.clickClientY = e.clientY - top;
+    this.clickClientX = e.clientX - left;
     this.currentIndex = index;
     clearTimeout(this.startHandlerTimeout);
-    this.startHandlerTimeout = setTimeout(() => {
-      onStartStopHandler({...this.state, index}, true, ON_START)(e);
-    }, 1);
+    this.startHandlerTimeout = setTimeout(() => onStartStopHandler({...this.state, index}, true, ON_START)(e), 1);
   }
 
   private moveEndHandler = (e: any, index: number) => {

@@ -1,4 +1,4 @@
-const deepEqual = require('deep-equal');
+import deepEqual from 'deep-equal';
 
 export function isBorderStartArea(area: number, distance: number, half: number): boolean {
   return (area - half) / 2 > distance;
