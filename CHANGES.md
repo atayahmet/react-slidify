@@ -26,3 +26,10 @@
 - Added version badge.
 - Added multiple point support.
 - Added element resize detection.
+
+## Changes for v1.0.0-alpha.11:
+- Added scroll position to moveHandler and clickHandler.
+- Some type declaration conflicts fixed.
+
+## Changes for v1.0.0-alpha.12:
+// ------------
