@@ -23,13 +23,23 @@
 - All event name that added hard coded has been changed to as constant.
 
 ## Changes for v1.0.0-alpha.8:
+
 - Added version badge.
 - Added multiple point support.
 - Added element resize detection.
 
 ## Changes for v1.0.0-alpha.11:
+
 - Added scroll position to moveHandler and clickHandler.
 - Some type declaration conflicts fixed.
 
 ## Changes for v1.0.0-alpha.12:
+
 // ------------
+
+## Changes for v1.0.0-alpha.13:
+
+- [BUG FIX] Container `display` changed from `inline-block` to `block`.
+- Added point index number to all triggered events.
+- The `defaultBackgroundColorOfPoint`  added to initial props.
+- `yarn.lock` file added to .gitignore.

@@ -19,7 +19,7 @@ export const onStartStopHandler = (
   const xPercent = getPosCalcAsPercent(container.width, xHalf, xPos);
   const yPercent = getPosCalcAsPercent(container.height, yHalf, yPos);
 
-  trigger(eventName, [xPercent, yPercent, {...points[index]}, { ...params.options }]);
+  trigger(eventName, [xPercent, yPercent, {...points[index]}, index, { ...params.options }]);
 
   setIsMovable(value);
 };
@@ -82,7 +82,7 @@ export const onMoveHandler = (params: Record<string, any> = {}) => {
       collision.trigger.border({
         ...axisParams,
         axis: AXIS_X,
-        eventDeps: [xPercent, yPercent, AXIS_X, {...points[index]}],
+        eventDeps: [xPercent, yPercent, AXIS_X, {...points[index]}, index],
         value: translates.translateX
       } as any);
     }
@@ -103,14 +103,14 @@ export const onMoveHandler = (params: Record<string, any> = {}) => {
       collision.trigger.border({
         ...axisParams, 
         axis: AXIS_Y,
-        eventDeps: [xPercent, yPercent, AXIS_Y, {...points[index]}],
+        eventDeps: [xPercent, yPercent, AXIS_Y, {...points[index]}, index],
         value: translates.translateY
       } as any);
     }
 
     window.requestAnimationFrame(() => setTranslates(translates, index));
 
-    trigger(ON_SLIDE, [xPercent, yPercent, {...points[index]}, options]);
+    trigger(ON_SLIDE, [xPercent, yPercent, {...points[index]}, index, options]);
   };
 };
 

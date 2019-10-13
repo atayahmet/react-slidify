@@ -13,11 +13,11 @@ export interface ISizes {
 }
 
 export type ReachPoint = 'start-point' | 'end-point';
-export type GenericHandlerArgs = (xPercent: number, yPercent: number, point: IPoint) => any;
+export type GenericHandlerArgs = (xPercent: number, yPercent: number, point: IPoint, index: number) => any;
 export type onSlideHandlerArgs = GenericHandlerArgs;
 export type onStartHandlerArgs = GenericHandlerArgs;
 export type onStopHandlerArgs = GenericHandlerArgs;
-export type onReachHandlerArgs = (xPercent: number, yPercent: number, axis: string, point: IPoint, at: ReachPoint) => any;
+export type onReachHandlerArgs = (xPercent: number, yPercent: number, axis: string, point: IPoint, at: ReachPoint, index: number) => any;
 
 export interface IPoint {
   x: number;

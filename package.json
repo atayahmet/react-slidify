@@ -1,6 +1,6 @@
 {
   "name": "@atayahmet/react-slidify",
-  "version": "1.0.0-alpha.12",
+  "version": "1.0.0-alpha.13",
   "description": "React Slidify is a component that transmits position coordinates of element with callbacks.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

@@ -12,7 +12,7 @@ import { IInternalPointProps, IPoint, ISlidifyOptions } from './utils/interfaces
 
 class Slidify extends React.Component<ISlidifyOptions, any> {
   public state: Readonly<any> = {};
-  protected wrapperEl: React.RefObject<HTMLDivElement> = React.createRef();
+  protected containerEl: React.RefObject<HTMLDivElement> = React.createRef();
   private currentIndex: number|null = null;
   private startHandlerTimeout: any;
   private updateTimeout: any;
@@ -81,9 +81,9 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
       ...this.getSizes(),
       render: true
     }, () => {
-      if (this.wrapperEl.current) {
+      if (this.containerEl.current) {
         this.resizeHandler();
-        elementResizeEvent(this.wrapperEl.current, this.resizeHandler);
+        elementResizeEvent(this.containerEl.current, this.resizeHandler);
       }
     });
   }
@@ -116,7 +116,7 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
 
   public render() {
     return (
-      <div ref={this.wrapperEl} className="rs-container" style={{height: this.prop("height"), width: this.prop('width'), display: 'inline-block', position: 'relative'}}>
+      <div ref={this.containerEl} className="rs-container" style={{height: this.prop("height"), width: this.prop('width'), position: 'relative'}}>
         <div
           className="rs-cursor-wrapper"
           onTouchMoveCapture={this.moveHandler}
@@ -147,17 +147,17 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
   }
 
   private get rect(): ClientRect {
-    const el = this.wrapperEl.current as HTMLDivElement;
+    const el = this.containerEl.current as HTMLDivElement;
     return el.getBoundingClientRect();
   }
 
   private get clientWidth(): number {
-    const el = this.wrapperEl.current as HTMLDivElement;
+    const el = this.containerEl.current as HTMLDivElement;
     return get("clientWidth", el, 0);
   }
 
   private get clientHeight(): number {
-    const el = this.wrapperEl.current as HTMLDivElement;
+    const el = this.containerEl.current as HTMLDivElement;
     return get("clientHeight", el, 0);
   }
 
@@ -244,7 +244,7 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
   }
 
   private getSizes() {
-    const el = this.wrapperEl.current as HTMLDivElement;
+    const el = this.containerEl.current as HTMLDivElement;
     const clientWidth = get("clientWidth", el, 0);
     const clientHeight = get("clientHeight", el, 0);
 

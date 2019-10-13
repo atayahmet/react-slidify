@@ -41,17 +41,18 @@ import Slidify from '@atayahmet/react-slidify';
 
 ### ISlidifyOptions
 
-| name     |                    type                  | default| description          |
-|----------|:-----------------------------------------|-------:|:---------------------|
-| width    | string                                   | 100%   | Width of the field.  |
-| height   | string                                   | 100%   | Height of the field. |
-| points   | [IPoint[]](#ipoint)                      | []     |                      |
-| multiple | boolean                                  | false  | Multiple points.     |
-| axis     | string                                   | xy     | Available axes.      |
-| onStart  | [onStartHandlerArgs](#onStartHandlerArgs)| -      | First move event.    |
-| onStop   | [onStopHandlerArgs](#onStopHandlerArgs)  | -      | Last move event.     |
-| onSlide  | [onSlideHandlerArgs](#onSlideHandlerArgs)| -      | Active slide event.  |
-| onReach  | [onReachHandlerArgs](#onReachHandlerArgs)| -      |Reach point event.    |
+| name     |                    type                  | default| description                       |
+|----------|:-----------------------------------------|-------:|:----------------------------------|
+| width    | string                                   | 100%   | Width of the field.               |
+| height   | string                                   | 100%   | Height of the field.              |
+| points   | [IPoint[]](#ipoint)                      | []     |                                   |
+| multiple | boolean                                  | false  | Multiple points.                  |
+| axis     | string                                   | xy     | Available axes.                   |
+| defaultBackgroundColorOfPoint | string              | red    | Default background color of point.|
+| onStart  | [onStartHandlerArgs](#onStartHandlerArgs)| -      | First move event.                 |
+| onStop   | [onStopHandlerArgs](#onStopHandlerArgs)  | -      | Last move event.                  |
+| onSlide  | [onSlideHandlerArgs](#onSlideHandlerArgs)| -      | Active slide event.               |
+| onReach  | [onReachHandlerArgs](#onReachHandlerArgs)| -      |Reach point event.                 |
 
 ### IPoint
 
