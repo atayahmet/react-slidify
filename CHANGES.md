@@ -43,3 +43,10 @@
 - Added point index number to all triggered events.
 - The `defaultBackgroundColorOfPoint`  added to initial props.
 - `yarn.lock` file added to .gitignore.
+
+## Changes for v1.0.0-alpha.14:
+- The `movable` option has been added to props.
+- [BUG FIX] If the remaining value less than 1, does not show the decimal value.
+- [BUG FIX] X and Y positions not updated when pass point data by triggered event.
+- All events output data has been collected in an object that named as [IEventPoint](https://github.com/atayahmet/react-slidify#IEventPoint) .
+- Pass jsx element to points in named as children.

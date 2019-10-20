@@ -47,12 +47,13 @@ import Slidify from '@atayahmet/react-slidify';
 | height   | string                                   | 100%   | Height of the field.              |
 | points   | [IPoint[]](#ipoint)                      | []     |                                   |
 | multiple | boolean                                  | false  | Multiple points.                  |
+| movable  | boolean                                  | true   | The points can move or vice versa.|
 | axis     | string                                   | xy     | Available axes.                   |
 | defaultBackgroundColorOfPoint | string              | red    | Default background color of point.|
 | onStart  | [onStartHandlerArgs](#onStartHandlerArgs)| -      | First move event.                 |
 | onStop   | [onStopHandlerArgs](#onStopHandlerArgs)  | -      | Last move event.                  |
 | onSlide  | [onSlideHandlerArgs](#onSlideHandlerArgs)| -      | Active slide event.               |
-| onReach  | [onReachHandlerArgs](#onReachHandlerArgs)| -      |Reach point event.                 |
+| onReach  | [onReachHandlerArgs](#onReachHandlerArgs)| -      | Reach point event.                |
 
 ### IPoint
 
@@ -64,6 +65,25 @@ import Slidify from '@atayahmet/react-slidify';
 | height   | number              | innerHeight | Height of the point in `px`.|
 | className| string `(optional)` | -           | Custom class name.   |
 | style    | [React.CSSProperties](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/e434515761b36830c3e58a970abf5186f005adac/types/react/index.d.ts#L794) `(optional)` | -            | Css properties. |
+| children | JSX Element         | null        | Pass JSX element to points. |
+
+### IEventPoint
+
+| name     | type                | description                     |
+|----------|:--------------------|---------------------------------|
+| x        | number              | Left position `px` value.       |
+| y        | number              | Top position `px` value.        |
+| width    | number              | Width of the point in `px`.     |
+| height   | number              | Height of the point in `px`.    |
+| axis     | string              | Current axis.                   |
+| percent  | [IPercent](#IPercent) | X and Y position as percent unit|
+
+
+### IPercent
+| name     | type                | description                     |
+|----------|:--------------------|---------------------------------|
+| x        | number              | Left position `percent` value.  |
+| y        | number              | Top position `percent` value.   |
 
 ## Events
 
@@ -77,16 +97,16 @@ import Slidify from '@atayahmet/react-slidify';
 ## Types
 
 ### onStartHandlerArgs 
-`(xPercent: number, yPercent: number, point: IPoint) => any`
+`(point: IEventPoint, index: number) => any`
 
 ### onStopHandlerArgs 
-`(xPercent: number, yPercent: number, point: IPoint) => any`
+`(point: IEventPoint, index: number) => any`
 
 ### onSlideHandlerArgs
-`(xPercent: number, yPercent: number, point: IPoint) => any`
+`(point: IEventPoint, index: number) => any`
 
 ### onReachHandlerArgs
-`(xPercent: number, yPercent: number, axis: string, point: IPoint, at: ReachPoint) => any`
+`(point: IEventPoint, at: ReachPoint, index: number) => any`
 
 ### ReachPoint
 `'start-point' | 'end-point'`

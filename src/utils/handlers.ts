@@ -1,25 +1,39 @@
-import { isMobile } from 'is-mobile';
-import { isBorderStartArea } from './assertions';
-import { collision } from './collisions';
-import { AXIS_X, AXIS_Y, ON_SLIDE } from './contants';
-import { get, getEndBorderValue, getPosCalcAsPercent, getStartBorderValue } from './getters';
-import trigger from './trigger';
+import { isMobile } from "is-mobile";
+import { isBorderStartArea } from "./assertions";
+import { collision } from "./collisions";
+import { AXIS_X, AXIS_Y, ON_SLIDE } from "./contants";
+import {
+  get,
+  getEndBorderValue,
+  getPosCalcAsPercent,
+  getStartBorderValue
+} from "./getters";
+import trigger from "./trigger";
 
 export const onStartStopHandler = (
   params = {} as Record<string, any>,
   value: boolean,
-  eventName: string,
+  eventName: string
 ): any => () => {
   const { setIsMovable, container, points, index } = params;
   const { xHalf, yHalf, translateX, translateY } = points[index];
-  
+
   const xPos = Math.floor(translateX + xHalf);
   const yPos = Math.floor(translateY + yHalf);
 
   const xPercent = getPosCalcAsPercent(container.width, xHalf, xPos);
   const yPercent = getPosCalcAsPercent(container.height, yHalf, yPos);
 
-  trigger(eventName, [xPercent, yPercent, {...points[index]}, index, { ...params.options }]);
+  trigger(eventName, [
+    {
+      percent: { x: xPercent, y: yPercent },
+      ...points[index],
+      x: translateX,
+      y: translateY
+    },
+    index,
+    { ...params.options }
+  ]);
 
   setIsMovable(value);
 };
@@ -27,14 +41,14 @@ export const onStartStopHandler = (
 export const onClickHandler = (params: Record<string, any> = {}) => {
   return () => {
     let axis = {};
-    const setTranslates = get('setTranslates', params);
+    const setTranslates = get("setTranslates", params);
     const { clientX = null, clientY = null, hasX, hasY, index } = params;
 
     if (hasX && Boolean(clientX)) {
-      axis = {...axis, translateX: clientX};
+      axis = { ...axis, translateX: clientX };
     }
     if (hasY && Boolean(clientY)) {
-      axis = {...axis, translateY: clientY};
+      axis = { ...axis, translateY: clientY };
     }
 
     window.requestAnimationFrame(() => setTranslates({ ...axis }, index));
@@ -58,31 +72,45 @@ export const onMoveHandler = (params: Record<string, any> = {}) => {
       clientX,
       clientY,
       hasX,
-      hasY,
+      hasY
     } = params;
 
-    const { xHalf, yHalf, width, height, translateX, translateY} = points[index];
+    const { xHalf, yHalf, width, height, translateX, translateY } = points[
+      index
+    ];
     const xPercent = getPosCalcAsPercent(container.width, xHalf, translateX);
     const yPercent = getPosCalcAsPercent(container.height, yHalf, translateY);
     let translates = {} as Record<string, any>;
+    let x: number = 0;
+    let y: number = 0;
 
     // X position half left area.
     if (hasX) {
       const axisParams = {
-        ...params, 
-        area: container.width, 
-        clientDistance: clientX, 
-        distance: translateX, 
-        half: xHalf, 
+        ...params,
+        area: container.width,
+        clientDistance: clientX,
+        distance: translateX,
+        half: xHalf,
         pointSize: width
       };
 
-      translates = {...translates, translateX: actionMove({...axisParams})};
+      x = actionMove({ ...axisParams });
+      translates = { ...translates, translateX: x };
 
       collision.trigger.border({
         ...axisParams,
         axis: AXIS_X,
-        eventDeps: [xPercent, yPercent, AXIS_X, {...points[index]}, index],
+        eventDeps: [
+          {
+            axis: AXIS_X,
+            percent: { x: xPercent, y: yPercent },
+            ...points[index],
+            x,
+            y: translateY
+          },
+          index
+        ],
         value: translates.translateX
       } as any);
     }
@@ -95,28 +123,42 @@ export const onMoveHandler = (params: Record<string, any> = {}) => {
         clientDistance: clientY,
         distance: translateY,
         half: yHalf,
-        pointSize: height,
+        pointSize: height
       };
 
-      translates = {...translates, translateY: actionMove({...axisParams})};
+      y = actionMove({ ...axisParams });
+      translates = { ...translates, translateY: y };
 
       collision.trigger.border({
-        ...axisParams, 
+        ...axisParams,
         axis: AXIS_Y,
-        eventDeps: [xPercent, yPercent, AXIS_Y, {...points[index]}, index],
+        eventDeps: [
+          {
+            axis: AXIS_Y,
+            percent: { x: xPercent, y: yPercent },
+            ...points[index],
+            x: translateX,
+            y
+          },
+          index
+        ],
         value: translates.translateY
       } as any);
     }
 
     window.requestAnimationFrame(() => setTranslates(translates, index));
 
-    trigger(ON_SLIDE, [xPercent, yPercent, {...points[index]}, index, options]);
+    trigger(ON_SLIDE, [
+      { percent: { x: xPercent, y: yPercent }, ...points[index], x, y },
+      index,
+      options
+    ]);
   };
 };
 
 export function actionMove(params: Record<string, any>) {
   const { clientDistance, distance, pointSize, area, half } = params;
-  return isBorderStartArea(area, distance, half) 
-    ? getStartBorderValue(clientDistance, pointSize) 
+  return isBorderStartArea(area, distance, half)
+    ? getStartBorderValue(clientDistance, pointSize)
     : getEndBorderValue(clientDistance, pointSize, distance, area);
 }

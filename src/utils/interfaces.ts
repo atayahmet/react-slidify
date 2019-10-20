@@ -19,6 +19,20 @@ export type onStartHandlerArgs = GenericHandlerArgs;
 export type onStopHandlerArgs = GenericHandlerArgs;
 export type onReachHandlerArgs = (xPercent: number, yPercent: number, axis: string, point: IPoint, at: ReachPoint, index: number) => any;
 
+export interface IEventPoint {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  axis: 'x' | 'y';
+  percent: IPercent;
+}
+
+export interface IPercent {
+  x: number;
+  y: number;
+}
+
 export interface IPoint {
   x: number;
   y: number;
@@ -26,6 +40,7 @@ export interface IPoint {
   height: number;
   style?: CSSProperties;
   className?: string;
+  children?: JSX.Element;
 }
 
 export interface IInternalPointProps extends IPoint {
@@ -49,6 +64,7 @@ export interface ISlidifyOptions {
   onStop?: onStopHandlerArgs;
   onSlide?: onSlideHandlerArgs;
   onReach?: onReachHandlerArgs;
+  movable?: boolean;
 }
 
 export interface IBorderEvent { 
