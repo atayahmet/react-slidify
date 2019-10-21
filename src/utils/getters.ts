@@ -45,7 +45,7 @@ export function getPosCalcAsPx(size: number, point: number, distance: number): n
 export function getPosCalcAsPercent(size: number, point: number, distance: number): number {
   const newSize = size - point * 2;
   const percent = (distance / newSize) * 100;
-  return percent > 100 || percent < 1 ? Math.round(percent) : percent;
+  return percent > 100 ? 100 : percent;
 }
 
 export function get(path: string, data: object, defaultData?: any): any {

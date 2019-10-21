@@ -14,3 +14,5 @@ export const AREA_SECOND = 'second';
 
 export const AXIS_X = 'x';
 export const AXIS_Y = 'y';
+
+export const PARAMS_KEY = ['width', 'height', 'ref', 'x', 'y', 'percent', 'axis'];

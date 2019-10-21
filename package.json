@@ -55,6 +55,7 @@
     "typescript": "^3.6.2"
   },
   "dependencies": {
+    "@util-funcs/pick": "0.0.1-beta.1",
     "deep-equal": "^1.1.0",
     "element-resize-event": "^3.0.3",
     "is-mobile": "^2.1.0",
