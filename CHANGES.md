@@ -43,3 +43,7 @@
 - Added point index number to all triggered events.
 - The `defaultBackgroundColorOfPoint`  added to initial props.
 - `yarn.lock` file added to .gitignore.
+
+## Changes for v1.0.0-alpha.15:
+- [BUG FIX] The arguments types of event handler has been fixed.
+- Added gif example.
