@@ -1,5 +1,4 @@
- [![npm version](https://badge.fury.io/js/%40atayahmet%2Freact-slidify.svg)](https://badge.fury.io/js/%40atayahmet%2Freact-slidify)
-
+ [![npm version](https://badge.fury.io/js/%40atayahmet%2Freact-slidify.svg)](https://badge.fury.io/js/%40atayahmet%2Freact-slidify) [![Build Status](https://travis-ci.org/atayahmet/react-slidify.svg?branch=master)](https://travis-ci.org/atayahmet/react-slidify)
 # React Slidify
 
 ![React Slidify](https://drive.google.com/uc?export=download&id=1v3zL8fQB4U70eD46CYataLi0DLLzQnCQ)

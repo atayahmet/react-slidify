@@ -3,21 +3,20 @@ import isNumber from "is-number";
 import * as React from "react";
 import initialProps from "./initialProps";
 import Point from "./Point";
-import "./style.css";
-import { hasAxis, isStyleEqualWith } from "./utils/assertions";
+import { isStyleEqualWith } from "./utils/assertions";
 import { ON_START, ON_STOP, PERCENT } from "./utils/contants";
 import {
   get,
+  getButtonState,
   getClientPos,
   getClientRects,
   getInitialPos,
-  getLeftButtonState,
   getPosCalc
 } from "./utils/getters";
 import {
-  onClickHandler,
-  onMoveHandler,
-  onStartStopHandler
+  pointClickHandler,
+  pointMovablityHandler,
+  pointMoveHandler,
 } from "./utils/handlers";
 import {
   IInternalPointProps,
@@ -42,59 +41,17 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
   }
 
   public componentDidUpdate(prevProps: ISlidifyOptions) {
-    const coords = [] as any[];
     const points = this.setRequiredProps(this.points);
-    const { container } = this.state;
-    let index = 0;
 
-    while (Boolean(points[index])) {
-      const point = points[index] as IInternalPointProps;
-
-      if (!Boolean(point)) {
-        return;
-      }
-
-      let coord = {};
-      const clientX = getPosCalc(
-        container.width,
-        point.width,
-        point.x,
-        this.prop("unit")
-      );
-      const clientY = getPosCalc(
-        container.height,
-        point.height,
-        point.y,
-        this.prop("unit")
-      );
-      const pointsLength = Object.keys(this.points).length;
-      const prevPointsLength = Object.keys(prevProps.points).length;
-
-      if (pointsLength === prevPointsLength) {
-        const isStyleEqual = isStyleEqualWith(prevProps.points[index], point);
-
-        if (this.hasX && prevProps.points[index].x !== point.x) {
-          coord = { ...coord, clientX };
-        }
-
-        if (this.hasY && prevProps.points[index].y !== point.y) {
-          coord = { ...coord, clientY };
-        }
-
-        if (!isStyleEqual) {
-          coord = { ...coord, style: point.style, clientX, clientY };
-        }
-      } else {
-        coord = { ...coord, style: point.style, clientX, clientY };
-      }
-
-      if (Object.keys(coord).length > 0) {
-        coords.push(coord);
-      }
-
-      index++;
+    if (prevProps.axis !== this.props.axis) {
+      // this update state that without render.
+      this.updateAxes();
     }
 
+    // update positions of the all points.
+    const coords = this.updatePoints(points, prevProps) || [];
+
+    // if any updated point, render.
     if (coords.length > 0) {
       this.update([...coords], points);
     }
@@ -117,9 +74,6 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
   }
 
   public UNSAFE_componentWillMount() {
-    const axis = this.prop("axis").split("");
-    const hasX = hasAxis("x", axis);
-    const hasY = hasAxis("y", axis);
     const points = this.setRequiredProps(this.points);
 
     this.setState({
@@ -127,11 +81,12 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
         height: 0,
         width: 0
       },
-      hasX,
-      hasY,
+      hasX: this.prop('axis').includes('x'),
+      hasY: this.prop('axis').includes('y'),
       isFinish: false,
       isMovable: false,
       points,
+      render: false,
       setFinish: (isFinish: boolean, finishedAxis: string) =>
         this.setState({ isFinish, finishedAxis }),
       setIsMovable: (isMovable: boolean) => this.setState({ isMovable }),
@@ -218,8 +173,8 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
             key={index}
             index={index}
             unit={this.unit}
-            moveEndHandler={this.moveEndHandler}
-            moveStartHandler={this.moveStartHandler}
+            moveEndHandler={this.movabilityStopHandler}
+            moveStartHandler={this.movabilityStartHandler}
             point={points[index] as IInternalPointProps}
           />
         );
@@ -272,7 +227,7 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
       let index = 0;
       while (coords.length > 0) {
         setTimeout(
-          onClickHandler({
+          pointClickHandler({
             ...this.state,
             ...coords.shift(),
             index,
@@ -287,6 +242,70 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
     }, 5);
   }
 
+  private updateAxes(props: ISlidifyOptions = this.props, render: boolean = false) {
+    const { axis = '' } = props;
+    this.setState({ hasX: axis.includes('x'), hasY: axis.includes('y'), render });
+  }
+
+  private updatePoints(points: IPoint[], prevProps: ISlidifyOptions) {
+    const coords = [] as any[];
+    const { container } = this.state;
+    let index = 0;
+
+    while (Boolean(points[index])) {
+      const point = points[index] as IInternalPointProps;
+
+      if (!Boolean(point)) {
+        return;
+      }
+
+      let coord = {};
+
+      const clientX = getPosCalc(
+        container.width,
+        point.width,
+        point.x,
+        this.prop("unit")
+      );
+
+      const clientY = getPosCalc(
+        container.height,
+        point.height,
+        point.y,
+        this.prop("unit")
+      );
+
+      const pointsLength = Object.keys(this.points).length;
+      const prevPointsLength = Object.keys(prevProps.points).length;
+
+      if (pointsLength === prevPointsLength) {
+        const isStyleEqual = isStyleEqualWith(prevProps.points[index], point);
+
+        if (this.hasX && prevProps.points[index].x !== point.x) {
+          coord = { ...coord, clientX };
+        }
+
+        if (this.hasY && prevProps.points[index].y !== point.y) {
+          coord = { ...coord, clientY };
+        }
+
+        if (!isStyleEqual) {
+          coord = { ...coord, style: point.style, clientX, clientY };
+        }
+      } else {
+        coord = { ...coord, style: point.style, clientX, clientY };
+      }
+
+      if (Object.keys(coord).length > 0) {
+        coords.push(coord);
+      }
+
+      index++;
+    }
+
+    return coords;
+  }
+
   private prop<K extends keyof ISlidifyOptions>(name: K) {
     return this.getProps()[name];
   }
@@ -297,8 +316,8 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
 
   private getSizes() {
     const el = this.containerEl.current as HTMLDivElement;
-    const clientWidth = get("clientWidth", el, 0);
-    const clientHeight = get("clientHeight", el, 0);
+    const clientWidth = get("clientWidth", el, this.prop('width'));
+    const clientHeight = get("clientHeight", el, this.prop('height'));
 
     return {
       container: {
@@ -330,16 +349,16 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
       return;
     }
 
-    const { clientX, clientY } = getClientPos({ ...e });
+    const { clientX, clientY } = getClientPos(e);
     const { left, top } = this.rect;
 
     setTimeout(() => {
-      const { xHalf = this.clickClientX, yHalf = this.clickClientY } = this
+      const { xHalf = 0, yHalf = 0 } = this
         .state.isMovable
         ? {}
         : this.state.points[0];
 
-      onMoveHandler({
+      pointMoveHandler({
         ...this.state,
         clientX: clientX - left - xHalf,
         clientY: clientY - top - yHalf,
@@ -352,12 +371,12 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
   private moveHandler = (e: any) => {
     e.stopPropagation();
 
-    const buttonState = getLeftButtonState(e);
+    const buttonState = getButtonState(e);
     const { clientX, clientY } = getClientPos(e);
     const { left, top } = this.rect;
 
     setTimeout(() => {
-      onMoveHandler({
+      pointMoveHandler({
         ...this.state,
         buttonState,
         clientX: clientX - left - this.clickClientX,
@@ -367,7 +386,7 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
     }, 2);
   };
 
-  private moveStartHandler = (e: any, index: number) => {
+  private movabilityStartHandler = (e: any, index: number) => {
     e.stopPropagation();
     const { top = 0, left = 0 } = getClientRects(e);
     this.clickClientY = e.clientY - top;
@@ -376,7 +395,7 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
     clearTimeout(this.startHandlerTimeout);
     this.startHandlerTimeout = setTimeout(
       () =>
-        onStartStopHandler(
+        pointMovablityHandler(
           { ...this.state, index },
           this.prop("movable"),
           ON_START
@@ -385,9 +404,9 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
     );
   };
 
-  private moveEndHandler = (e: any, index: number) => {
+  private movabilityStopHandler = (e: any, index: number) => {
     this.currentIndex = null;
-    onStartStopHandler({ ...this.state, index }, false, ON_STOP)(e);
+    pointMovablityHandler({ ...this.state, index }, false, ON_STOP)(e);
   };
 }
 

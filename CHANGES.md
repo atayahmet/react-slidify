@@ -54,3 +54,7 @@
 ## Changes for v1.0.0-alpha.15:
 - [BUG FIX] The arguments types of event handler has been fixed.
 - Added gif example.
+
+## Changes for v1.0.0:
+- Tests added.
+- Some method names changed with more friendly naming.

@@ -71,3 +71,7 @@ export interface IBorderEvent {
   area: number;
   clientDistance: number;
 }
+
+export interface ITriggerEvent {
+  eventTrigger?: CallableFunction;
+}

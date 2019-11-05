@@ -24,10 +24,10 @@ export default function Point({
       onMouseDown={e => moveStartHandler(e, index)}
       style={{
         backgroundColor: initialProps.defaultBackgroundColorOfPoint,
-        height: point.height,
+        height: (point.height || 0),
         transform: `translate3d(${(point.translateX || 0) +
           0}${unit}, ${(point.translateY || 0) + 0}${unit}, 0)`,
-        width: point.width,
+        width: (point.width || 0),
         ...(point.style || {}),
         position: "absolute"
       }}

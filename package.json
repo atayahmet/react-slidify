@@ -1,6 +1,6 @@
 {
   "name": "@atayahmet/react-slidify",
-  "version": "1.0.0-alpha.15",
+  "version": "1.0.0",
   "description": "React Slidify is a component that transmits position coordinates of element with callbacks.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -20,7 +20,8 @@
     "preversion": "npm run lint",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "jest --config ./jest.config.js",
+    "test:watch": "npm run test -- --watch"
   },
   "repository": {
     "type": "git",
@@ -45,11 +46,17 @@
     "@types/element-resize-event": "^2.0.0",
     "@types/is-mobile": "^0.3.0",
     "@types/is-number": "^7.0.0",
+    "@types/jest": "^24.0.19",
+    "@types/jsdom": "^12.2.4",
     "@types/react": "^16.9.5",
     "@types/react-dom": "^16.9.1",
+    "@types/react-test-renderer": "^16.9.1",
+    "jest": "^24.9.0",
     "prettier": "^1.18.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-test-renderer": "^16.11.0",
+    "ts-jest": "^24.1.0",
     "tslint": "^5.19.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.6.2"

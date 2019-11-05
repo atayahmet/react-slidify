@@ -5,12 +5,12 @@ import { ITranslate } from './interfaces';
 export function getTranslates(el: HTMLDivElement): ITranslate | void {
   if (Boolean(el) && el.style.transform !== null) {
     const matches = el.style.transform.match(/translate3d\(([0-9]+)px,\s([0-9]+)px.*$/) || [];
-    const [, translateX = 0, translateY = 0] = matches.filter(Number).map(item => Number(item));
+    const [translateX = 0, translateY = 0] = matches.filter(Number).map(item => Number(item));
     return { translateX, translateY };
   }
 }
 
-export function getStartBorderValue(distance: number, cursorWidth: number): number {
+export function getStartBorderValue(distance: number): number {
   return distance < 0 ? 0 : distance;
 }
 
@@ -20,7 +20,7 @@ export function getEndBorderValue(distance: number, cursorWidth: number, transX:
   return distance + cursorWidth > areaWidth ? areaWidth - cursorWidth : left;
 }
 
-export function getLeftButtonState(e: MouseEvent) {
+export function getButtonState(e: MouseEvent) {
   const event = { ...e };
   return event.buttons === undefined ? event.which : event.buttons;
 }
@@ -37,7 +37,7 @@ export function getPosCalc(size: number, point: number = 0, distance: number = 0
 
 export function getPosCalcAsPx(size: number, point: number, distance: number): number {
   const areaSize = size - point;
-  const percent = distance / size * 100
+  const percent = distance / size * 100;
   const targetDistance = size / 100 * percent;
   return targetDistance > areaSize ? areaSize : targetDistance;
 }
@@ -71,7 +71,7 @@ export function getClientRects(e: Record<string, any>) {
 
 export function getInitialPos(area: number, cursor: number, initialDistance: number = 0): number {
   const hasIn = isBorderStartArea(area, initialDistance, (area / 2));
-  const startArea = getStartBorderValue(initialDistance, cursor);
-  const endArea = getEndBorderValue(initialDistance, cursor, initialDistance, area);
-  return hasIn ? startArea : endArea;
+  return hasIn 
+    ? getStartBorderValue(initialDistance) 
+    : getEndBorderValue(initialDistance, cursor, initialDistance, area);
 }
