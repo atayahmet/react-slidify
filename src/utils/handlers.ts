@@ -1,8 +1,9 @@
+import get from '@util-funcs/object-get';
 import { isMobile } from 'is-mobile';
 import { isBorderStartArea } from './assertions';
 import { collision } from './collisions';
 import { AXIS_X, AXIS_Y, ON_SLIDE } from './contants';
-import { get, getEndBorderValue, getPosCalcAsPercent, getStartBorderValue } from './getters';
+import { getEndBorderValue, getPosCalcAsPercent, getStartBorderValue } from './getters';
 import trigger from './trigger';
 
 export const pointMovablityHandler = (

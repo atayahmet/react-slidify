@@ -58,3 +58,6 @@
 ## Changes for v1.0.0:
 - Tests added.
 - Some method names changed with more friendly naming.
+
+## Changes for v1.0.1:
+- get() helper replaced with [@util-funcs/object-get](https://github.com/util-funcs/object-get)

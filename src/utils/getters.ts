@@ -48,18 +48,6 @@ export function getPosCalcAsPercent(size: number, point: number, distance: numbe
   return percent > 100 ? 100 : percent;
 }
 
-export function get(path: string, data: object, defaultData?: any): any {
-  return !Boolean(path)
-    ? defaultData
-    : path
-        .split('.')
-        .reduce(
-          (result: Record<string, any>, key: string) =>
-            Boolean(result) && Boolean(result[key]) && typeof result[key] !== 'object' ? result[key] : defaultData,
-          data,
-        );
-}
-
 export function getClientPos(e: any): Record<string, number> {
   return Boolean(e.changedTouches) ? e.changedTouches[0] : e;
 }

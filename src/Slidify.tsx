@@ -1,3 +1,4 @@
+import get from '@util-funcs/object-get';
 import elementResizeEvent from "element-resize-event";
 import isNumber from "is-number";
 import * as React from "react";
@@ -6,7 +7,6 @@ import Point from "./Point";
 import { isStyleEqualWith } from "./utils/assertions";
 import { ON_START, ON_STOP, PERCENT } from "./utils/contants";
 import {
-  get,
   getButtonState,
   getClientPos,
   getClientRects,
