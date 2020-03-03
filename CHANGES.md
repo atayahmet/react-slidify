@@ -61,3 +61,6 @@
 
 ## Changes for v1.0.1:
 - get() helper replaced with [@util-funcs/object-get](https://github.com/util-funcs/object-get)
+
+## Changes for v1.0.2:
+- Added guide.gif file

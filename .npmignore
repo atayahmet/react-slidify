@@ -6,4 +6,5 @@ jest.config.js
 tslint.json
 .prettierrc
 .travis.yml
+guide.gif
 TODO
