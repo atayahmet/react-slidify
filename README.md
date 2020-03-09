@@ -1,142 +1,116 @@
-# React Axios Token Provider
+ [![npm version](https://badge.fury.io/js/%40atayahmet%2Freact-slidify.svg)](https://badge.fury.io/js/%40atayahmet%2Freact-slidify) [![Build Status](https://travis-ci.org/atayahmet/react-slidify.svg?branch=master)](https://travis-ci.org/atayahmet/react-slidify)
+# React Slidify
 
-React Axios Token Provider package is a make easy what repetitive processes. For example handle access token or refresh token management process easly.
+![React Slidify](./guide.gif)
 
-## Why
-
-It can be preferred to reduce repetitive practices for authentication operations in projects.
-
-## Features
-
-- Access token management
-- Refresh token management
-- Csrf/Xsrf token management
+React Slidify is a component that transmits position coordinates with callbacks at each step of an object that you can advance by dragging within a field. The component can be use as volume control, music player timeline etc.
 
 ## Installation
 
-Use the package manager **yarn** or **npm** to install `react-axios-token-provider`
+Use the package manager [yarn](https://yarnpkg.com/) or [npm](https://www.npmjs.com) to install `react-slidify`.
 
-```sh
-$ npm i @atayahmet/react-axios-token-provider --save
+```bash
+npm i @atayahmet/react-slidify --save
 ```
 
-```sh
-$ yarn add @atayahmet/react-axios-token-provider
+```bash
+yarn add @atayahmet/react-slidify
 ```
 
-## Basic Usage
+## Usage
 
 ```jsx
-import AxiosTokenProvider from "@atayahmet/react-axios-token-provider";
-import axios from "axios";
+import Slidify from '@atayahmet/react-slidify';
 
-function App() {
-  return (
-    <AxiosTokenProvider instance={axios}>
-      <div>
-        <h1>Hello World!</h1>
-      </div>
-    </AxiosTokenProvider>
-  );
-}
+<Slidify
+  width="250px"
+  height="250px"
+  points={[
+    {
+      x={10}
+      y={300}
+      width={20}
+      height={20}
+    }
+  ]}
+  axis="xy"
+  onSlide={callback}
+/> 
 ```
 
-## Props
+## Props 
 
-| name                | type          | default                                         | description                                      |
-| ------------------- | ------------- | ----------------------------------------------- | ------------------------------------------------ |
-| instance            | AxiosInstance | AxiosInstance                                   | An axios instance.                               |
-| init                | Function      | -                                               | Initializer helper function.                     |
-| refreshToken        | Boolean       | false                                           | Activation of refresh token.                     |
-| csrfToken           | Boolean       | false                                           | Activation of csrf token.                        |
-| initialAccessToken  | String        | -                                               | Initial access token.                            |
-| initialRefreshToken | String        | -                                               | Initial refresh token.                           |
-| icliennitialCsrfToken    | String        | -                                               | Initial csrf token.                              |
-| tokenPathVariants   | IPathVariants | [Default Path Variants](#default-path-variants) | The paths of all type tokens in response object. |
-| statusCallbacks     | Object        | -                                               | Specific events of status codes.                 |
+### ISlidifyOptions
 
-## instance
+| name     |                    type                  | default| description                       |
+|----------|:-----------------------------------------|-------:|:----------------------------------|
+| width    | string                                   | 100%   | Width of the field.               |
+| height   | string                                   | 100%   | Height of the field.              |
+| points   | [IPoint[]](#ipoint)                      | []     |                                   |
+| multiple | boolean                                  | false  | Multiple points.                  |
+| movable  | boolean                                  | true   | The points can move or vice versa.|
+| axis     | string                                   | xy     | Available axes.                   |
+| defaultBackgroundColorOfPoint | string              | red    | Default background color of point.|
+| onStart  | [onStartHandlerArgs](#onStartHandlerArgs)| -      | First move event.                 |
+| onStop   | [onStopHandlerArgs](#onStopHandlerArgs)  | -      | Last move event.                  |
+| onSlide  | [onSlideHandlerArgs](#onSlideHandlerArgs)| -      | Active slide event.               |
+| onReach  | [onReachHandlerArgs](#onReachHandlerArgs)| -      | Reach point event.                |
 
-You need to define your axios instance you want to manage. If no instance is defined, no action will be taken. A log is written to the console at the warning level.
+### IPoint
 
-**Example:**
+| name     | type                | default     | description          |
+|----------|:--------------------|-------------|:---------------------|
+| x        | number              | -           | Left position `px` value. |
+| y        | number              | -           | Top position `px` value.  |
+| width    | number              | innerWidth  | Width of the point in `px`. |
+| height   | number              | innerHeight | Height of the point in `px`.|
+| className| string `(optional)` | -           | Custom class name.   |
+| style    | [React.CSSProperties](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/e434515761b36830c3e58a970abf5186f005adac/types/react/index.d.ts#L794) `(optional)` | -            | Css properties. |
+| children | JSX Element         | null        | Pass JSX element to points. |
 
-```tsx
-import axios from "axios";
+### IEventPoint
 
-<AxiosTokenProvider instance={axios}>
-  <App />
-</AxiosTokenProvider>;
-```
+| name     | type                | description                     |
+|----------|:--------------------|---------------------------------|
+| x        | number              | Left position `px` value.       |
+| y        | number              | Top position `px` value.        |
+| width    | number              | Width of the point in `px`.     |
+| height   | number              | Height of the point in `px`.    |
+| axis     | string              | Current axis.                   |
+| percent  | [IPercent](#IPercent) | X and Y position as percent unit|
 
-## init
 
-The init prop is a inilizer function for provide extra config to developers.
+### IPercent
+| name     | type                | description                     |
+|----------|:--------------------|---------------------------------|
+| x        | number              | Left position `percent` value.  |
+| y        | number              | Top position `percent` value.   |
 
-**Example:**
+## Events
 
-```js
-function initializer(instance) {
-  instance.baseURL = "https://reqres.in/api";
-}
-```
+| name     | arguments                                   | description         |
+|----------|:--------------------------------------------|---------------------|
+| onStart  | [onStartHandlerArgs](#onStartHandlerArgs)   | First move event.   | 
+| onStop   | [onStopHandlerArgs](#onStopHandlerArgs)     | Last move event.    |
+| onSlide  | [onSlideHandlerArgs](#onSlideHandlerArgs)   | Active slide event. |
+| onReach  | [onReachHandlerArgs](#onReachHandlerArgs)   | Reach point event.  |
 
-```tsx
-<AxiosTokenProvider init={initializer} instance={axios}>
-  <App />
-</AxiosTokenProvider>
-```
+## Types
 
-## tokenPathVariants
+### onStartHandlerArgs 
+`(point: IEventPoint, index: number) => any`
 
-You can define all token (access, refresh or csrf) paths to this prop.
+### onStopHandlerArgs 
+`(point: IEventPoint, index: number) => any`
 
-**Example:**
+### onSlideHandlerArgs
+`(point: IEventPoint, index: number) => any`
 
-```tsx
-<AxiosTokenProvider
-  tokenPathVariants={{
-    accessTokens: ["headers.X-Access-Token", "data.tokens.access_token"],
-    refreshTokens: ["headers.X-Refresh-Token", "data.tokens.refresh_token"]
-  }}
-></AxiosTokenProvider>
-```
+### onReachHandlerArgs
+`(point: IEventPoint, at: ReachPoint, index: number) => any`
 
-## Default Path Variants
-
-```js
-{
-  accessToken: ['headers.x-access-token', 'data.access_token'],
-  csrfToken: ['headers.x-csrf-token', 'headers.x-xsrf-token'],
-  refreshToken: ['headers.x-refresh-token', 'data.refresh_token'],
-}
-```
-
-## statusCallbacks
-
-You can define specific callbacks to response status codes.
-
-**Example:**
-
-```js
-function unauthorized(response) {
-  location.href = '/login';
-}
-
-function forbidden(response) {
-  // do something
-}
-```
-
-```tsx
-<AxiosTokenProvider
-  statusCallbacks={{
-    401: unauthorized,
-    403: forbidden
-  }}
-></AxiosTokenProvider>
-```
-
+### ReachPoint
+`'start-point' | 'end-point'`
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
