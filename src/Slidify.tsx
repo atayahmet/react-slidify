@@ -41,7 +41,7 @@ class Slidify extends React.Component<ISlidifyOptions, any> {
   }
 
   public componentDidUpdate(prevProps: ISlidifyOptions) {
-    const points = this.setRequiredProps(this.points);
+    const points = this.setRequiredProps(this.setTranslates(this.points));
 
     if (prevProps.axis !== this.props.axis) {
       // this update state that without render.

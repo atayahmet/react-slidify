@@ -64,3 +64,6 @@
 
 ## Changes for v1.0.2:
 - Added guide.gif file
+
+## Changes for v1.0.3:
+- Added guide.gif file
